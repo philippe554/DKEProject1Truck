@@ -5,15 +5,6 @@ import javafx.geometry.Point3D;
 
 public class Container {
 
-    /*test
-   public static void main(String[] args){
-
-
-       Container b = new Container(4,3,5);
-
-       System.out.println(b.getContainer()[0][0][0]);
-   }*/
-
     public int width;
     public int length;
     public int height;
@@ -49,14 +40,14 @@ public class Container {
 
     public Point3D[] getVerticles(){
         Point3D[] verticles = new Point3D[8];
-        verticles[0] = new Point3D(0,0,0);
-        verticles[1] = new Point3D(0,width,0);
-        verticles[2] = new Point3D(0,width,height);
-        verticles[3] = new Point3D(0,0,height);
-        verticles[4] = new Point3D(length,0,0);
-        verticles[5] = new Point3D(length,width,0);
-        verticles[6] = new Point3D(length,width,height);
-        verticles[7] = new Point3D(length,0,height);
+        verticles[7] = new Point3D(0,0,0);
+        verticles[5] = new Point3D(0,width,0);
+        verticles[4] = new Point3D(0,width,height);
+        verticles[6] = new Point3D(0,0,height);
+        verticles[3] = new Point3D(length,0,0);
+        verticles[1] = new Point3D(length,width,0);
+        verticles[0] = new Point3D(length,width,height);
+        verticles[2] = new Point3D(length,0,height);
 
         return verticles;
     }
