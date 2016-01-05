@@ -25,7 +25,7 @@ class Side{
 }
 
 public class WireframeViewer extends Applet
-        implements MouseListener, MouseMotionListener {
+        implements MouseListener, MouseMotionListener, MouseWheelListener {
 
     int width, height;
     int mx, my;  // the most recently recorded mouse coordinates
@@ -34,6 +34,7 @@ public class WireframeViewer extends Applet
     Graphics backg;
 
     int azimuth = 35, elevation = 30;
+    float nearToObj = 6f;  // distance from near plane to center of object
 
     Point3D[] vertices;
     Edge[] edges;
@@ -92,6 +93,7 @@ public class WireframeViewer extends Applet
 
         addMouseListener( this );
         addMouseMotionListener( this );
+        addMouseWheelListener(this);
     }
 
     void drawWireframe( Graphics g ) {
@@ -112,7 +114,6 @@ public class WireframeViewer extends Applet
         int scaleFactor = width/4;
 
         float near = 3;  // distance from eye to near plane
-        float nearToObj = 6f;  // distance from near plane to center of object
 
         for ( int j = 0; j < vertices.length; j++ ) {
             int x0 = vertices[j].x;
@@ -174,6 +175,14 @@ public class WireframeViewer extends Applet
                     points[ edges[j].b ].x, points[ edges[j].b ].y);
         }
 
+    }
+
+    public void mouseWheelMoved(MouseWheelEvent e){
+        nearToObj = nearToObj + (float) e.getPreciseWheelRotation();
+        // update the backbuffer
+        drawWireframe( backg );
+        repaint();
+        e.consume();
     }
 
     public void mouseEntered( MouseEvent e ) { }
