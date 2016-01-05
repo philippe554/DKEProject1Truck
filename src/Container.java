@@ -1,6 +1,8 @@
+import javafx.geometry.Point3D;
 /**
  * Created by asus on 04.01.2016.
  */
+
 public class Container {
 
     /*test
@@ -43,5 +45,19 @@ public class Container {
     }
     public int getheight() {
         return height;
+    }
+
+    public Point3D[] getVerticles(){
+        Point3D[] verticles = new Point3D[8];
+        verticles[0] = new Point3D(0,0,0);
+        verticles[1] = new Point3D(0,width,0);
+        verticles[2] = new Point3D(0,width,height);
+        verticles[3] = new Point3D(0,0,height);
+        verticles[4] = new Point3D(length,0,0);
+        verticles[5] = new Point3D(length,width,0);
+        verticles[6] = new Point3D(length,width,height);
+        verticles[7] = new Point3D(length,0,height);
+
+        return verticles;
     }
 }
