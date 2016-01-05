@@ -5,25 +5,28 @@ import javafx.geometry.Point3D;
 
 public class Container {
 
-    /*test
-   public static void main(String[] args){
-
-
-       Container b = new Container(4,3,5);
-
-       System.out.println(b.getContainer()[0][0][0]);
-   }*/
-
     public int width;
     public int length;
     public int height;
     public int[][][] container;
+    Point3D[] vertices;
 
     public Container(int width,int length,int height ){
         this.width= width;
         this.length = length;
         this.height = height;
         this.container = new int[width][length][height];
+
+        //Make array of 3DPoint objects containing vertices of the container
+        vertices = new Point3D[8];
+        vertices[7] = new Point3D(0,0,0);
+        vertices[5] = new Point3D(0,width,0);
+        vertices[4] = new Point3D(0,width,height);
+        vertices[6] = new Point3D(0,0,height);
+        vertices[3] = new Point3D(length,0,0);
+        vertices[1] = new Point3D(length,width,0);
+        vertices[0] = new Point3D(length,width,height);
+        vertices[2] = new Point3D(length,0,height);
 
         //empty container
         for (int i = 0; i < container.length; i++){
@@ -46,18 +49,5 @@ public class Container {
     public int getheight() {
         return height;
     }
-
-    public Point3D[] getVerticles(){
-        Point3D[] verticles = new Point3D[8];
-        verticles[0] = new Point3D(0,0,0);
-        verticles[1] = new Point3D(0,width,0);
-        verticles[2] = new Point3D(0,width,height);
-        verticles[3] = new Point3D(0,0,height);
-        verticles[4] = new Point3D(length,0,0);
-        verticles[5] = new Point3D(length,width,0);
-        verticles[6] = new Point3D(length,width,height);
-        verticles[7] = new Point3D(length,0,height);
-
-        return verticles;
-    }
+    public Point3D[] getVertices() { return vertices; }
 }
