@@ -3,25 +3,59 @@ import java.util.ArrayList;
 
 public class Parcel
 {
+    //Locations of the parcel's blocks with respect to the (0,0,0) block
+    private ArrayList<Point3D> blockLocations = new ArrayList<Point3D>();
+    //Location of the (0,0,0) block with respect to upper container
+    private Point3D location = new Point3D(0,0,0);
+    //ID to recognise each parcel
+    private int ID;
+    static int numberOfParcels = 0;
 
-    ArrayList<Point3D> blockLocations = new ArrayList<Point3D>();
-
-    /** Default constructor. Contains a block at (0,0,0)
+    /** Default constructor. Contains a block at (0,0,0) at the location (0,0,0)
      *
      */
     public Parcel()
     {
+        ID = numberOfParcels;
+        numberOfParcels++;
         blockLocations.add(new Point3D(0,0,0));
     }
 
-    /** Constructor from a set of point locations
+    /** Constructor from a set of point locations to a defined location
      *
      * @param blockLocations The locations of the blocks for the parcel
+     * @param location The location where the parcel is created to
+     */
+    public Parcel(ArrayList<Point3D> blockLocations, Point3D location)
+    {
+        ID = numberOfParcels;
+        numberOfParcels++;
+        this.blockLocations = (ArrayList<Point3D>) blockLocations.clone();
+        this.location = location;
+    }
+
+    /** Constructs the parcel from a set of points to location (0,0,0)
+     *
+     * @param blockLocations Locations of the blocks
      */
     public Parcel(ArrayList<Point3D> blockLocations)
     {
+        ID = numberOfParcels;
+        numberOfParcels++;
         this.blockLocations = (ArrayList<Point3D>) blockLocations.clone();
     }
+
+    /** Gets the id of the parcel
+     *
+     * @return The ID number as an int
+     */
+    public int getID(){return ID;}
+
+    /** Gets the number of created parcels
+     *
+     * @return Number of parcels as an int
+     */
+    public int getNumberOfParcels(){return numberOfParcels;}
 
     /** Rotates the parcel clockwise along the X-axis
      *
@@ -98,6 +132,68 @@ public class Parcel
         return blockLocations;
     }
 
+    /** Gets the location of the center block with respect to a container
+     *
+     * @return Point3D location
+     */
+    public Point3D getLocation(){return location;}
+
+    /** Translates the parcel by coodrinates
+     *
+     * @param x X-coordinate to be translated by
+     * @param y Y-coordinate to be translated by
+     * @param z Z-coordinate to be translated by
+     */
+    public void translate(int x, int y, int z)
+    {
+        location = location.add(x,y,z);
+    }
+
+    /** Translates the location of the parcel by a point
+     *
+     * @param point Point3D by which the location is translated
+     */
+    public void translate(Point3D point)
+    {
+        location = location.add(point);
+    }
+
+    /** Sets the location of the parcel based coordinates
+     *
+     * @param x X-coordinate for the location
+     * @param y Y-coordinate for the location
+     * @param z Z-coordinate for the location
+     */
+    public void setLocation(int x, int y, int z)
+    {
+        location = location.add(-location.getX(),-location.getY(),-location.getZ());
+        location = location.add(x,y,z);
+    }
+
+    /** Sets the location of the parcel to a 3D point
+     *
+     * @param point Point3D of the location
+     */
+    public void setLocation(Point3D point)
+    {
+        location = location.add(-location.getX(),-location.getY(),-location.getZ());
+        location = location.add(point);
+    }
+
+    /** Returns the locations of the blocks in the parcel with respect to an upper container
+     *
+     * @return ArrayList<Point3D> containing the points
+     */
+    public ArrayList<Point3D> getBlockLocations()
+    {
+        ArrayList<Point3D> coordinates = new ArrayList<Point3D>();
+        for(Point3D point : blockLocations)
+        {
+            coordinates.add(point.add(location));
+        }
+        return coordinates;
+    }
+
     /** Gets the list of the block locations as a string
      *
      * @return A string of Point3Ds
@@ -124,13 +220,12 @@ public class Parcel
         test.add(new Point3D(1,1,0));
         test.add(new Point3D(0,1,1));
         test.add(new Point3D(0,1,0));
-        System.out.println(test);
-        //These rotations "reflect" the parcel
-        test.rotateX();
-        test.rotateY();
-        test.rotateZ();
-        test.rotateZ();
-        test.rotateZ();
-        System.out.println(test);
+        System.out.println(test.getLocation());
+        System.out.println("\n" + test.getBlockLocations() + "\n");
+        test.translate(new Point3D(1,1,1));
+        System.out.println(test.getLocation());
+        test.setLocation(-1,-1,-1);
+        System.out.println(test.getLocation());
+        System.out.println("\n" + test.getBlockLocations() + "\n");
     }
 }
