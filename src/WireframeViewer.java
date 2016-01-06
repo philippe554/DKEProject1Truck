@@ -1,14 +1,12 @@
+import com.sun.javafx.geom.Point2D;
+import javafx.geometry.Point2DBuilder;
+import javafx.geometry.Point3D;
+
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.lang.Math;
-
-class Point3D {
-    public int x, y, z;
-    public Point3D( int X, int Y, int Z ) {
-        x = X;  y = Y;  z = Z;
-    }
-}
+import java.util.Arrays;
 
 class Edge {
     public int a, b;
@@ -17,15 +15,62 @@ class Edge {
     }
 }
 
-class Side{
-    public int a,b,c;
-    public Side(int A,int B,int C) {
-        a=A;b=B;c=C;
-    }
-}
-
 public class WireframeViewer extends Applet
         implements MouseListener, MouseMotionListener, MouseWheelListener {
+
+    class Side implements Comparable<Side>{
+        public int a,b,c;
+        double distance;
+        public double t;
+        public Point3D dir;
+        public Side(int A,int B,int C) {
+            a=A;b=B;c=C;
+        }
+
+        //@Override
+        public int compareTo(Side side) {
+            return -Double.compare(distance,side.distance);
+            /*Point3D g = new Point3D((vertices[a].getX()+vertices[b].getX()+vertices[c].getX())/3.0, //gravity point triangle
+                    (vertices[a].getY()+vertices[b].getY()+vertices[c].getY())/3.0,
+                    (vertices[a].getZ()+vertices[b].getZ()+vertices[c].getZ())/3.0);
+            Point3D l = new Point3D(g.getX()-camera.getX(),g.getY()-camera.getY(),g.getZ()-camera.getZ());//line from camera to g
+            Point3D d1 = new Point3D(vertices[side.a].getX()-vertices[side.c].getX(), //start calc plane second side
+                    vertices[side.a].getY()-vertices[side.c].getY(),
+                    vertices[side.a].getZ()-vertices[side.c].getZ());
+            Point3D d2 = new Point3D(vertices[side.b].getX()-vertices[side.c].getX(),
+                    vertices[side.b].getY()-vertices[side.c].getY(),
+                    vertices[side.b].getZ()-vertices[side.c].getZ());
+            Point3D cp = new Point3D(d1.getY()*d2.getZ()-d1.getZ()*d2.getY(),
+                    d1.getZ()*d2.getX()-d1.getX()*d2.getZ()
+                    ,d1.getX()*d2.getY()-d1.getY()*d2.getX());
+            double A=cp.getX();
+            double B=cp.getY();
+            double C=cp.getZ();
+            double D=A*vertices[side.c].getX() +
+                    B*vertices[side.c].getY()+
+                    C*vertices[side.c].getZ();
+
+            double Nv = A*l.getX() + B*l.getY() + C*l.getZ();
+            double Nr0 = A*camera.getX() + B*camera.getY() + C*camera.getZ();
+
+            if (Nv != 0)       // line and plane are not parallel and must intersect
+            {
+                t = (D - Nr0)/Nv;
+                return t;
+                //Point3D i = new Point3D(g1.getX() + l.getX()*t,g1.getY() + l.getY()*t,g1.getZ() + l.getZ()*t);
+            }
+            else               // line is parallel to plane
+            {
+                t=0;
+                if (Nr0 == D) {
+                    return 0;//line is in plane
+                }
+                else{
+                    return 0;//line is parallel to plane
+                }
+            }*/
+        }
+    }
 
     int width, height;
     int mx, my;  // the most recently recorded mouse coordinates
@@ -33,7 +78,7 @@ public class WireframeViewer extends Applet
     Image backbuffer;
     Graphics backg;
 
-    int azimuth = 35, elevation = 30;
+    int azimuth = 0, elevation = 45;
     float nearToObj = 6f;  // distance from near plane to center of object
 
     Point3D[] vertices;
@@ -41,14 +86,16 @@ public class WireframeViewer extends Applet
     Side[] side;
 
     Point3D sun;
+    Point3D camera;
 
     public void init() {
         width = getSize().width;
         height = getSize().height;
 
-        sun = new Point3D(3,3,3);
+        sun = new Point3D(Math.sqrt(0.5),Math.sqrt(0.5),0);
+        camera = new Point3D(0,10,-10);
 
-        vertices = new Point3D[ 8 ];
+        vertices = new Point3D[ 16 ];
         vertices[0] = new Point3D( -2, -2, -2 );
         vertices[1] = new Point3D( -2, -2,  2 );
         vertices[2] = new Point3D( -2,  2, -2 );
@@ -58,7 +105,16 @@ public class WireframeViewer extends Applet
         vertices[6] = new Point3D(  2,  2, -2 );
         vertices[7] = new Point3D(  2,  2,  2 );
 
-        edges = new Edge[ 12 ];
+        vertices[8] = new Point3D( -2+5, -2, -2 );
+        vertices[9] = new Point3D( -2+5, -2,  2 );
+        vertices[10] = new Point3D( -2+5,  2, -2 );
+        vertices[11] = new Point3D( -2+5,  2,  2 );
+        vertices[12] = new Point3D(  2+5, -2, -2 );
+        vertices[13] = new Point3D(  2+5, -2,  2 );
+        vertices[14] = new Point3D(  2+5,  2, -2 );
+        vertices[15] = new Point3D(  2+5,  2,  2 );
+
+        edges = new Edge[ 24 ];
         edges[ 0] = new Edge( 0, 1 );
         edges[ 1] = new Edge( 0, 2 );
         edges[ 2] = new Edge( 0, 4 );
@@ -72,7 +128,20 @@ public class WireframeViewer extends Applet
         edges[10] = new Edge( 5, 7 );
         edges[11] = new Edge( 6, 7 );
 
-        side = new Side[12];
+        edges[ 0+12] = new Edge( 0+8, 1+8 );
+        edges[ 1+12] = new Edge( 0+8, 2+8 );
+        edges[ 2+12] = new Edge( 0+8, 4+8 );
+        edges[ 3+12] = new Edge( 1+8, 3+8 );
+        edges[ 4+12] = new Edge( 1+8, 5+8 );
+        edges[ 5+12] = new Edge( 2+8, 3+8 );
+        edges[ 6+12] = new Edge( 2+8, 6+8 );
+        edges[ 7+12] = new Edge( 3+8, 7+8 );
+        edges[ 8+12] = new Edge( 4+8, 5+8 );
+        edges[ 9+12] = new Edge( 4+8, 6+8 );
+        edges[10+12] = new Edge( 5+8, 7+8 );
+        edges[11+12] = new Edge( 6+8, 7+8 );
+
+        side = new Side[24];
         side[0] = new Side(0,2,4);//front
         side[1] = new Side(2,4,6);
         side[2] = new Side(0,1,3);//left
@@ -85,6 +154,43 @@ public class WireframeViewer extends Applet
         side[9] = new Side(4,5,7);
         side[10] = new Side(1,3,7);//back
         side[11] = new Side(1,5,7);
+        side[0].dir=new Point3D(0,0,-1);
+        side[1].dir=new Point3D(0,0,-1);
+        side[2].dir=new Point3D(-1,0,0);
+        side[3].dir=new Point3D(-1,0,0);
+        side[4].dir=new Point3D(0,1,0);
+        side[5].dir=new Point3D(0,1,0);
+        side[6].dir=new Point3D(0,-1,0);
+        side[7].dir=new Point3D(0,-1,0);
+        side[8].dir=new Point3D(1,0,0);
+        side[9].dir=new Point3D(1,0,0);
+        side[10].dir=new Point3D(0,0,1);
+        side[11].dir=new Point3D(0,0,1);
+
+        side[0+12] = new Side(0+8,2+8,4+8);//front
+        side[1+12] = new Side(2+8,4+8,6+8);
+        side[2+12] = new Side(0+8,1+8,3+8);//left
+        side[3+12] = new Side(0+8,2+8,3+8);
+        side[4+12] = new Side(2+8,3+8,7+8);//top
+        side[5+12] = new Side(2+8,6+8,7+8);
+        side[6+12] = new Side(0+8,1+8,5+8);//bottom
+        side[7+12] = new Side(0+8,4+8,5+8);
+        side[8+12] = new Side(4+8,6+8,7+8);//right
+        side[9+12] = new Side(4+8,5+8,7+8);
+        side[10+12] = new Side(1+8,3+8,7+8);//back
+        side[11+12] = new Side(1+8,5+8,7+8);
+        side[0+12].dir=new Point3D(0,0,-1);
+        side[1+12].dir=new Point3D(0,0,-1);
+        side[2+12].dir=new Point3D(-1,0,0);
+        side[3+12].dir=new Point3D(-1,0,0);
+        side[4+12].dir=new Point3D(0,1,0);
+        side[5+12].dir=new Point3D(0,1,0);
+        side[6+12].dir=new Point3D(0,-1,0);
+        side[7+12].dir=new Point3D(0,-1,0);
+        side[8+12].dir=new Point3D(1,0,0);
+        side[9+12].dir=new Point3D(1,0,0);
+        side[10+12].dir=new Point3D(0,0,1);
+        side[11+12].dir=new Point3D(0,0,1);
 
 
         backbuffer = createImage( width, height );
@@ -98,9 +204,13 @@ public class WireframeViewer extends Applet
 
     void drawWireframe( Graphics g ) {
 
+        // draw the wireframe
+        g.setColor( Color.black );
+        g.fillRect( 0, 0, width, height );
+
         // compute coefficients for the projection
-        double theta = Math.PI * 1 / 180.0;
-        double phi = Math.PI * 1 / 180.0;
+        double theta = Math.PI * azimuth / 180.0;
+        double phi = Math.PI * elevation / 180.0;
         float cosT = (float)Math.cos( theta ), sinT = (float)Math.sin( theta );
         float cosP = (float)Math.cos( phi ), sinP = (float)Math.sin( phi );
         float cosTcosP = cosT*cosP, cosTsinP = cosT*sinP,
@@ -116,16 +226,16 @@ public class WireframeViewer extends Applet
         float near = 3;  // distance from eye to near plane
 
         for ( int j = 0; j < vertices.length; j++ ) {
-            int x0 = vertices[j].x;
-            int y0 = vertices[j].y;
-            int z0 = vertices[j].z;
+            double x0 = vertices[j].getX();
+            double y0 = vertices[j].getY();
+            double z0 = vertices[j].getZ();
 
             // compute an orthographic projection
-            float x1 = cosT*x0 + sinT*z0;
-            float y1 = -sinTsinP*x0 + cosP*y0 + cosTsinP*z0;
+            double x1 = cosT*x0 + sinT*z0;
+            double y1 = -sinTsinP*x0 + cosP*y0 + cosTsinP*z0;
 
             // now adjust things to get a perspective projection
-            float z1 = cosTcosP*z0 - sinTcosP*x0 - sinP*y0;
+            double z1 = cosTcosP*z0 - sinTcosP*x0 - sinP*y0;
             x1 = x1*near/(z1+near+nearToObj);
             y1 = y1*near/(z1+near+nearToObj);
 
@@ -136,25 +246,69 @@ public class WireframeViewer extends Applet
             );
         }
 
-        // draw the wireframe
-        g.setColor( Color.black );
-        g.fillRect( 0, 0, width, height );
+        for(int j=0;j<side.length;j++)
+        {
+            double d1 = Math.sqrt(Math.pow(vertices[side[j].a].getX()-camera.getX() ,2)+ Math.pow(vertices[side[j].a].getY()-camera.getY() ,2)+ Math.pow(vertices[side[j].a].getZ()-camera.getZ() ,2));
+            double d2 = Math.sqrt(Math.pow(vertices[side[j].b].getX()-camera.getX() ,2)+ Math.pow(vertices[side[j].b].getY()-camera.getY() ,2)+ Math.pow(vertices[side[j].b].getZ()-camera.getZ() ,2));
+            double d3 = Math.sqrt(Math.pow(vertices[side[j].c].getX()-camera.getX() ,2)+ Math.pow(vertices[side[j].c].getY()-camera.getY() ,2)+ Math.pow(vertices[side[j].c].getZ()-camera.getZ() ,2));
+
+            side[j].distance=Math.sqrt(
+                    Math.pow((vertices[side[j].a].getX()+vertices[side[j].b].getX()+vertices[side[j].c].getX())/3-camera.getX() ,2)+
+                            Math.pow((vertices[side[j].a].getY()+vertices[side[j].b].getY()+vertices[side[j].c].getY())/3-camera.getY() ,2)+
+                            Math.pow((vertices[side[j].a].getZ()+vertices[side[j].b].getZ()+vertices[side[j].c].getZ())/3-camera.getZ() ,2)
+            );
+
+            //side[j].distance=Math.min(d1,d2);
+            //side[j].distance=Math.min(side[j].distance,d3);
+        }
+
+        Arrays.sort(side);
+        /*int errorFound=10;
+        while(errorFound>8)
+        {
+            errorFound=0;
+            for(int i=0;i<(side.length-1);i++)
+            {
+                double t = side[i].compareTo(side[i+1]);
+                if(t>1.0)
+                {
+                    errorFound++;
+                    Side tSide=side[i];
+                    side[i]=side[i+1];
+                    side[i+1]=tSide;
+                }
+            }
+            System.out.println(errorFound);
+        }*/
 
         for(int j=0;j<side.length;j++)
         {
-            Point3D vector = new Point3D((vertices[side[j].a].x+vertices[side[j].b].x+vertices[side[j].c].x)/3,
-            (vertices[side[j].a].y+vertices[side[j].b].y+vertices[side[j].c].y)/3,
-            (vertices[side[j].a].z+vertices[side[j].b].z+vertices[side[j].c].z)/3);
+            /*Point3D d1 = new Point3D(vertices[side[j].a].getX()-vertices[side[j].c].getX(),
+                    vertices[side[j].a].getY()-vertices[side[j].c].getY(),
+                    vertices[side[j].a].getZ()-vertices[side[j].c].getZ());
+            Point3D d2 = new Point3D(vertices[side[j].b].getX()-vertices[side[j].c].getX(),
+                    vertices[side[j].b].getY()-vertices[side[j].c].getY(),
+                    vertices[side[j].b].getZ()-vertices[side[j].c].getZ());
+            Point3D cp = new Point3D(d1.getY()*d2.getZ()-d1.getZ()*d2.getY(),
+                    d1.getZ()*d2.getX()-d1.getX()*d2.getZ()
+                    ,d1.getX()*d2.getY()-d1.getY()*d2.getX());
+            double A=cp.getX();
+            double B=cp.getY();
+            double C=cp.getZ();
+            double D=-(A*vertices[side[j].c].getX() +
+                    B*vertices[side[j].c].getY()+
+                    C*vertices[side[j].c].getZ());
 
-            double dotProduct = vector.x*sun.x+vector.y*sun.y+vector.z*sun.z;
+            double angle = Math.asin(Math.abs(A*sun.getX()+B*sun.getY()+B*sun.getZ())/
+                    (Math.sqrt(A*A+B*B+C*C)* Math.sqrt(sun.getX()*sun.getX()+sun.getY()*sun.getY()+sun.getZ()*sun.getZ())))*
+                    180/Math.PI;
 
-            double lenthSun=Math.sqrt(sun.x*sun.x + sun.y*sun.y +sun.z*sun.z);
+            angle*=4;*/
 
-            double lenthVector=Math.sqrt(vector.x*vector.x + vector.y*vector.y +vector.z*vector.z);
+            int angle = 255-(int)(Math.abs(Math.acos( sun.getX()*side[j].dir.getX()+sun.getY()*side[j].dir.getY()+sun.getZ()*side[j].dir.getZ()))/Math.PI*255);
 
-            int angle = (int)(Math.acos(dotProduct/ (lenthSun*lenthVector))*180/Math.PI);
-
-            System.out.println(angle);
+            if(angle<0){angle=0;}
+            else if(angle>255){angle=255;}
 
             int pointX[]=new int[3];
             pointX[0]=points[side[j].a].x;
@@ -168,14 +322,34 @@ public class WireframeViewer extends Applet
             g.fillPolygon(pointX, pointY , 3);
         }
 
-        g.setColor( Color.white );
+        /*g.setColor( Color.white );
         for (int j = 0; j < edges.length; ++j ) {
             g.drawLine(
                     points[ edges[j].a ].x, points[ edges[j].a ].y,
                     points[ edges[j].b ].x, points[ edges[j].b ].y);
-        }
+        }*/
 
     }
+
+    public boolean triangleTriangleIntersectino2D(int sideID1, int sideID2)
+    {
+        return true;
+    }
+    public boolean lineLineIntersection2D(Point2D p1,Point2D p2,Point2D p3,Point2D p4)
+    {
+        double x1=p1.x,x2=p2.x,x3=p3.x,x4=p4.x;
+        double y1=p1.y,y2=p2.y,y3=p3.y,y4=p4.y;
+
+        double ua = (((x4-x3)*(y1-y3))-((y4-y3)*(x1-x3)))/(((y4-y3)*(x2-x1))-((x4-x3)*(y2-y1)));
+        double ub = (((x2-x1)*(y1-y3))-((y2-y1)*(x1-x3)))/(((y4-y3)*(x2-x1))-((x4-x3)*(y2-y1)));
+
+        if(ua>=0 && ua<=1 && ub>=0 && ub<=1)
+        {
+            return true;
+        }
+        return false;
+    }
+
 
     public void mouseWheelMoved(MouseWheelEvent e){
         nearToObj = nearToObj + (float) e.getPreciseWheelRotation();
@@ -200,14 +374,32 @@ public class WireframeViewer extends Applet
         int new_mx = e.getX();
         int new_my = e.getY();
 
-        // adjust angles according to the distance travelled by the mouse
-        // since the last event
-        azimuth -= new_mx - mx;
-        elevation += new_my - my;
+        double angle =(double)(mx-new_mx)/180.0*Math.PI;
+
+        mx=new_mx;
+        my=new_my;
 
         double[][] m=new double[3][3];
-        m[0][0]=Math.cos(azimuth);
+        m[0][0]=Math.cos(angle);m[0][1]=0;m[0][2]=Math.sin(angle);
+        m[1][0]=0;m[1][1]=1;m[1][2]=0;
+        m[2][0]=-Math.sin(angle);m[2][1]=0;m[2][2]=Math.cos(angle);
 
+        for(int i=0;i<vertices.length;i++)
+        {
+            vertices[i] = new Point3D(m[0][0]*vertices[i].getX() + m[0][1]*vertices[i].getY() + m[0][2]*vertices[i].getZ()
+                ,m[1][0]*vertices[i].getX() + m[1][1]*vertices[i].getY() + m[1][2]*vertices[i].getZ()
+                ,m[2][0]*vertices[i].getX() + m[2][1]*vertices[i].getY() + m[2][2]*vertices[i].getZ());
+        }
+        for(int i=0;i<side.length;i++)
+        {
+            side[i].dir = new Point3D(m[0][0]*side[i].dir.getX() + m[0][1]*side[i].dir.getY() + m[0][2]*side[i].dir.getZ()
+                    ,m[1][0]*side[i].dir.getX() + m[1][1]*side[i].dir.getY() + m[1][2]*side[i].dir.getZ()
+                    ,m[2][0]*side[i].dir.getX() + m[2][1]*side[i].dir.getY() + m[2][2]*side[i].dir.getZ());
+        }
+
+        sun = new Point3D(m[0][0]*sun.getX() + m[0][1]*sun.getY() + m[0][2]*sun.getZ()
+                ,m[1][0]*sun.getX() + m[1][1]*sun.getY() + m[1][2]*sun.getZ()
+                ,m[2][0]*sun.getX() + m[2][1]*sun.getY() + m[2][2]*sun.getZ());
 
         // update the backbuffer
         drawWireframe( backg );
