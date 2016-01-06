@@ -192,10 +192,23 @@ public class WireframeViewer extends Applet
         side[10+12].dir=new Point3D(0,0,1);
         side[11+12].dir=new Point3D(0,0,1);
 
+        /*vertices = new Point3D[ 4 ];
+        vertices[0] = new Point3D( -2, -2, 0 );
+        vertices[1] = new Point3D( 2, -2,  0 );
+        vertices[2] = new Point3D( 2,  2, 0 );
+        vertices[3] = new Point3D( -2,  2,  0 );
+
+        side = new Side[2];
+        side[0] = new Side(0,1,2);//front
+        side[1] = new Side(0,3,2);
+        side[0].dir=new Point3D(0,0,1);
+        side[1].dir=new Point3D(0,0,1);*/
+
 
         backbuffer = createImage( width, height );
         backg = backbuffer.getGraphics();
-        drawWireframe( backg );
+        //drawWireframe( backg );
+        drawWindow(backg);
 
         addMouseListener( this );
         addMouseMotionListener( this );
@@ -331,6 +344,142 @@ public class WireframeViewer extends Applet
 
     }
 
+    void drawWindow(Graphics g)
+    {
+        camera = new Point3D(0,20,-20);
+        //Point3D windowStart=new Point3D(-3,3,-3);
+        Point3D dir = new Point3D(0,-1,1);
+        g.setColor( Color.BLACK );
+        g.fillRect( 0, 0, width, height );
+
+        int hViewAngle=60;
+        int vViewAngle=hViewAngle;
+        int viewDesity=5;
+        double debtData[][] = new double[hViewAngle*viewDesity][vViewAngle*viewDesity];
+        Color colorData[][] = new Color[hViewAngle*viewDesity][vViewAngle*viewDesity];
+
+        //get vecors in all directions
+        for(int i=0;i<debtData.length;i++)
+        {
+            for(int j=0;j<debtData[0].length;j++)
+            {
+                //Point3D angle = new Point3D(windowStart.getX()+(double)i/30.0,windowStart.getY()-(double)j/30.0,windowStart.getZ()-camera.getZ());
+
+                double[][] m=new double[3][3];
+                double hAngle = (-(double)hViewAngle/2.0 + (double)i/(double)debtData.length*(double)hViewAngle)/180.0*Math.PI;
+                m[0][0]=Math.cos(hAngle);m[0][1]=0;m[0][2]=Math.sin(hAngle);
+                m[1][0]=0;m[1][1]=1;m[1][2]=0;
+                m[2][0]=-Math.sin(hAngle);m[2][1]=0;m[2][2]=Math.cos(hAngle);
+                Point3D angle = new Point3D(m[0][0]*dir.getX() + m[0][1]*dir.getY() + m[0][2]*dir.getZ()
+                        ,m[1][0]*dir.getX() + m[1][1]*dir.getY() + m[1][2]*dir.getZ()
+                        ,m[2][0]*dir.getX() + m[2][1]*dir.getY() + m[2][2]*dir.getZ());
+
+                double vAngle = (-(double)vViewAngle/2.0 + (double)j/(double)debtData[0].length*(double)vViewAngle)/180.0*Math.PI;
+                m[0][0]=1;m[0][1]=0;m[0][2]=0;
+                m[1][0]=0;m[1][1]=Math.cos(vAngle);m[1][2]=-Math.sin(vAngle);
+                m[2][0]=0;m[2][1]=Math.sin(vAngle);m[2][2]=Math.cos(vAngle);
+                angle = new Point3D(m[0][0]*angle.getX() + m[0][1]*angle.getY() + m[0][2]*angle.getZ()
+                        ,m[1][0]*angle.getX() + m[1][1]*angle.getY() + m[1][2]*angle.getZ()
+                        ,m[2][0]*angle.getX() + m[2][1]*angle.getY() + m[2][2]*angle.getZ());
+
+                double minDebt=-1;
+                Color color=null;
+                for(int k=0;k<side.length;k++)
+                {
+                    Point3D d1 = new Point3D(vertices[side[k].a].getX()-vertices[side[k].c].getX(), //start calc plane second side
+                            vertices[side[k].a].getY()-vertices[side[k].c].getY(),
+                            vertices[side[k].a].getZ()-vertices[side[k].c].getZ());
+                    Point3D d2 = new Point3D(vertices[side[k].b].getX()-vertices[side[k].c].getX(),
+                            vertices[side[k].b].getY()-vertices[side[k].c].getY(),
+                            vertices[side[k].b].getZ()-vertices[side[k].c].getZ());
+                    Point3D cp = new Point3D(d1.getY()*d2.getZ()-d1.getZ()*d2.getY(),
+                            d1.getZ()*d2.getX()-d1.getX()*d2.getZ()
+                            ,d1.getX()*d2.getY()-d1.getY()*d2.getX());
+                    double A=cp.getX();
+                    double B=cp.getY();
+                    double C=cp.getZ();
+                    double D=A*vertices[side[k].c].getX() +
+                            B*vertices[side[k].c].getY()+
+                            C*vertices[side[k].c].getZ();
+
+                    double Nv = A*angle.getX() + B*angle.getY() + C*angle.getZ();
+                    double Nr0 = A*camera.getX() + B*camera.getY() + C*camera.getZ();
+
+                    if (Nv != 0)       // line and plane are not parallel and must intersect
+                    {
+                        double t = (D - Nr0)/Nv;
+                        if(t>=1) {
+                            Point3D col = new Point3D(camera.getX() + t * angle.getX(), camera.getY() + t * angle.getY(), camera.getZ() + t * angle.getZ());
+                            if (PointInTriangle(col, vertices[side[k].a], vertices[side[k].b], vertices[side[k].c])) {
+                                double distance = distancePointPoint3D(col, camera);
+                                if (minDebt == -1 || minDebt > distance) {
+                                    minDebt = distance;
+                                    int shadow = 255 - (int) (Math.abs(Math.acos(sun.getX() * side[k].dir.getX() + sun.getY() * side[k].dir.getY() + sun.getZ() * side[k].dir.getZ())) / Math.PI * 255);
+
+                                    if (shadow < 0) {
+                                        shadow = 0;
+                                    } else if (shadow > 255) {
+                                        shadow = 255;
+                                    }
+
+                                    color = new Color(100, 100, shadow);
+                                }
+                            }
+                        }
+                    }
+                }
+                if(minDebt!=-1)
+                {
+                    debtData[i][j]=minDebt;
+                    colorData[i][j]=color;
+                    g.setColor( colorData[i][j] );
+                    g.drawLine(i, j, i, j);
+                }
+            }
+        }
+    }
+    public Point3D subtract3D(Point3D p1,Point3D p2)
+    {
+        return new Point3D(p1.getX()-p2.getX(),p1.getY()-p2.getY(),p1.getZ()-p2.getZ());
+    }
+    public double distancePointPoint3D(Point3D p1,Point3D p2)
+    {
+        return Math.sqrt(Math.pow(p1.getX()-p2.getX(),2)+Math.pow(p1.getY()-p2.getY(),2)+Math.pow(p1.getZ()-p2.getZ(),2));
+    }
+    public boolean PointInTriangle(Point3D p,Point3D a,Point3D b,Point3D c) {
+        Point3D v0=subtract3D(c,a);
+        Point3D v1=subtract3D(b,a);
+        Point3D v2=subtract3D(p,a);
+        double u = (dotProduct3D(v1,v1)*dotProduct3D(v2,v0)-dotProduct3D(v1,v0)*dotProduct3D(v2,v1))/(dotProduct3D(v0,v0)*dotProduct3D(v1,v1)-dotProduct3D(v0,v1)*dotProduct3D(v1,v0));
+        double v = (dotProduct3D(v0,v0)*dotProduct3D(v2,v1)-dotProduct3D(v0,v1)*dotProduct3D(v2,v0))/(dotProduct3D(v0,v0)*dotProduct3D(v1,v1)-dotProduct3D(v0,v1)*dotProduct3D(v1,v0));
+        if(u>=0 && v>=0 && u<=1 && v<=1 && (u+v)<=1)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public boolean sameSide3D(Point3D p1,Point3D p2,Point3D a,Point3D b){
+        Point3D cp1 = crossProduct(new Point3D(b.getX()-a.getX(),b.getY()-a.getY(),b.getZ()-a.getZ()),new Point3D(p1.getX()-a.getX(),p1.getY()-a.getY(),p1.getZ()-a.getZ()));
+        Point3D cp2 = crossProduct(new Point3D(b.getX()-a.getX(),b.getY()-a.getY(),b.getZ()-a.getZ()),new Point3D(p2.getX()-a.getX(),p2.getY()-a.getY(),p2.getZ()-a.getZ()));
+        if(dotProduct3D(cp1,cp2)>=0){
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public double dotProduct3D(Point3D p1, Point3D p2)
+    {
+        return p1.getX()*p2.getX()+p1.getY()*p2.getY()+p1.getZ()*p2.getZ();
+    }
+    public Point3D crossProduct(Point3D p1, Point3D p2)
+    {
+        return new Point3D(p1.getY()*p2.getZ()-p1.getZ()*p2.getY(),p1.getZ()*p2.getX()-p1.getX()*p2.getZ(),p1.getX()*p2.getY()-p1.getY()*p2.getZ());
+    }
     public boolean triangleTriangleIntersectino2D(int sideID1, int sideID2)
     {
         return true;
@@ -354,7 +503,8 @@ public class WireframeViewer extends Applet
     public void mouseWheelMoved(MouseWheelEvent e){
         nearToObj = nearToObj + (float) e.getPreciseWheelRotation();
         // update the backbuffer
-        drawWireframe( backg );
+        //drawWireframe( backg );
+        drawWindow(backg);
         repaint();
         e.consume();
     }
@@ -402,7 +552,8 @@ public class WireframeViewer extends Applet
                 ,m[2][0]*sun.getX() + m[2][1]*sun.getY() + m[2][2]*sun.getZ());
 
         // update the backbuffer
-        drawWireframe( backg );
+        //drawWireframe( backg );
+        drawWindow(backg);
 
         // update our data
         mx = new_mx;
