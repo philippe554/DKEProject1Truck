@@ -1,8 +1,9 @@
 import javafx.geometry.Point3D;
 import java.util.ArrayList;
 
-public class Parcel
+public class Parcel implements Comparable<Parcel>
 {
+    public static final int rotations = 24;
     //Locations of the parcel's blocks with respect to the (0,0,0) block
     private ArrayList<Point3D> blockLocations = new ArrayList<Point3D>();
     //Location of the (0,0,0) block with respect to upper container
@@ -10,6 +11,7 @@ public class Parcel
     //ID to recognise each parcel
     private int ID;
     static int numberOfParcels = 0;
+    private double value;
 
     /** Default constructor. Contains a block at (0,0,0) at the location (0,0,0)
      *
@@ -44,6 +46,41 @@ public class Parcel
         numberOfParcels++;
         this.blockLocations = (ArrayList<Point3D>) blockLocations.clone();
     }
+
+    /** Compares two Parcel-class objects
+     *
+     * @param anotherParcel Object to be compared to
+     * @return 0 if parcels are equal, -1 if anotherParcel is larger and 1 if smaller
+     */
+    public int compareTo(Parcel anotherParcel)
+    {
+        if(anotherParcel.getValue() > this.value)
+        {
+            return -1;
+        }
+        else if(anotherParcel.getValue() < this.value)
+        {
+            return 1;
+        }
+        else
+            return 0;
+
+    }
+
+    /** Gets the value of the parcel divided by its volume
+     *
+     * @return value/volume as double
+     */
+    public double getValue()
+    {
+        return (this.value/blockLocations.size());
+    }
+
+    /** Sets parcel's value to a certain double
+     *
+     * @param value The value to be set to
+     */
+    public void setValue(double value) {this.value = value;}
 
     /** Gets the id of the parcel
      *
