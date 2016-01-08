@@ -5,6 +5,7 @@ import javafx.geometry.Point3D;
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.lang.Math;
 import java.util.Arrays;
 
@@ -23,8 +24,30 @@ public class WireframeViewer extends Applet
         double distance;
         public double t;
         public Point3D dir;
+        double planeA;
+        double planeB;
+        double planeC;
+        double planeD;
+        public void calcPlane(){
+            Point3D d1 = new Point3D(vertices[a].getX()-vertices[c].getX(), //start calc plane second side
+                    vertices[a].getY()-vertices[c].getY(),
+                    vertices[a].getZ()-vertices[c].getZ());
+            Point3D d2 = new Point3D(vertices[b].getX()-vertices[c].getX(),
+                    vertices[b].getY()-vertices[c].getY(),
+                    vertices[b].getZ()-vertices[c].getZ());
+            Point3D cp = new Point3D(d1.getY()*d2.getZ()-d1.getZ()*d2.getY(),
+                    d1.getZ()*d2.getX()-d1.getX()*d2.getZ()
+                    ,d1.getX()*d2.getY()-d1.getY()*d2.getX());
+            planeA=cp.getX();
+            planeB=cp.getY();
+            planeC=cp.getZ();
+            planeD=planeA*vertices[c].getX() +
+                    planeB*vertices[c].getY()+
+                    planeC*vertices[c].getZ();
+        }
         public Side(int A,int B,int C) {
             a=A;b=B;c=C;
+            calcPlane();
         }
 
         //@Override
@@ -213,6 +236,39 @@ public class WireframeViewer extends Applet
         addMouseListener( this );
         addMouseMotionListener( this );
         addMouseWheelListener(this);
+
+        while(true)
+        {
+            double angle =5/180.0*Math.PI;
+
+            double[][] m=new double[3][3];
+            m[0][0]=Math.cos(angle);m[0][1]=0;m[0][2]=Math.sin(angle);
+            m[1][0]=0;m[1][1]=1;m[1][2]=0;
+            m[2][0]=-Math.sin(angle);m[2][1]=0;m[2][2]=Math.cos(angle);
+
+            for(int i=0;i<vertices.length;i++)
+            {
+                vertices[i] = new Point3D(m[0][0]*vertices[i].getX() + m[0][1]*vertices[i].getY() + m[0][2]*vertices[i].getZ()
+                        ,m[1][0]*vertices[i].getX() + m[1][1]*vertices[i].getY() + m[1][2]*vertices[i].getZ()
+                        ,m[2][0]*vertices[i].getX() + m[2][1]*vertices[i].getY() + m[2][2]*vertices[i].getZ());
+            }
+            for(int i=0;i<side.length;i++)
+            {
+                side[i].dir = new Point3D(m[0][0]*side[i].dir.getX() + m[0][1]*side[i].dir.getY() + m[0][2]*side[i].dir.getZ()
+                        ,m[1][0]*side[i].dir.getX() + m[1][1]*side[i].dir.getY() + m[1][2]*side[i].dir.getZ()
+                        ,m[2][0]*side[i].dir.getX() + m[2][1]*side[i].dir.getY() + m[2][2]*side[i].dir.getZ());
+                side[i].calcPlane();
+            }
+
+            sun = new Point3D(m[0][0]*sun.getX() + m[0][1]*sun.getY() + m[0][2]*sun.getZ()
+                    ,m[1][0]*sun.getX() + m[1][1]*sun.getY() + m[1][2]*sun.getZ()
+                    ,m[2][0]*sun.getX() + m[2][1]*sun.getY() + m[2][2]*sun.getZ());
+
+            // update the backbuffer
+            //drawWireframe( backg );
+            drawWindow(backg);
+            repaint();
+        }
     }
 
     void drawWireframe( Graphics g ) {
@@ -355,6 +411,7 @@ public class WireframeViewer extends Applet
         int hViewAngle=60;
         int vViewAngle=hViewAngle;
         int viewDesity=5;
+        BufferedImage img = new BufferedImage(hViewAngle*viewDesity, vViewAngle*viewDesity, BufferedImage.TYPE_INT_RGB);
         double debtData[][] = new double[hViewAngle*viewDesity][vViewAngle*viewDesity];
         Color colorData[][] = new Color[hViewAngle*viewDesity][vViewAngle*viewDesity];
 
@@ -386,28 +443,12 @@ public class WireframeViewer extends Applet
                 Color color=null;
                 for(int k=0;k<side.length;k++)
                 {
-                    Point3D d1 = new Point3D(vertices[side[k].a].getX()-vertices[side[k].c].getX(), //start calc plane second side
-                            vertices[side[k].a].getY()-vertices[side[k].c].getY(),
-                            vertices[side[k].a].getZ()-vertices[side[k].c].getZ());
-                    Point3D d2 = new Point3D(vertices[side[k].b].getX()-vertices[side[k].c].getX(),
-                            vertices[side[k].b].getY()-vertices[side[k].c].getY(),
-                            vertices[side[k].b].getZ()-vertices[side[k].c].getZ());
-                    Point3D cp = new Point3D(d1.getY()*d2.getZ()-d1.getZ()*d2.getY(),
-                            d1.getZ()*d2.getX()-d1.getX()*d2.getZ()
-                            ,d1.getX()*d2.getY()-d1.getY()*d2.getX());
-                    double A=cp.getX();
-                    double B=cp.getY();
-                    double C=cp.getZ();
-                    double D=A*vertices[side[k].c].getX() +
-                            B*vertices[side[k].c].getY()+
-                            C*vertices[side[k].c].getZ();
-
-                    double Nv = A*angle.getX() + B*angle.getY() + C*angle.getZ();
-                    double Nr0 = A*camera.getX() + B*camera.getY() + C*camera.getZ();
+                    double Nv = side[k].planeA*angle.getX() + side[k].planeB*angle.getY() + side[k].planeC*angle.getZ();
+                    double Nr0 = side[k].planeA*camera.getX() + side[k].planeB*camera.getY() + side[k].planeC*camera.getZ();
 
                     if (Nv != 0)       // line and plane are not parallel and must intersect
                     {
-                        double t = (D - Nr0)/Nv;
+                        double t = (side[k].planeD - Nr0)/Nv;
                         if(t>=1) {
                             Point3D col = new Point3D(camera.getX() + t * angle.getX(), camera.getY() + t * angle.getY(), camera.getZ() + t * angle.getZ());
                             if (PointInTriangle(col, vertices[side[k].a], vertices[side[k].b], vertices[side[k].c])) {
@@ -432,11 +473,13 @@ public class WireframeViewer extends Applet
                 {
                     debtData[i][j]=minDebt;
                     colorData[i][j]=color;
-                    g.setColor( colorData[i][j] );
-                    g.drawLine(i, j, i, j);
+                    //g.setColor( colorData[i][j] );
+                    //g.drawLine(i, j, i, j);
+                    img.setRGB(i,j,((100 << 16) | (100 << 8) | colorData[i][j].getBlue()));
                 }
             }
         }
+        g.drawImage(img,0,0,null);
     }
     public Point3D subtract3D(Point3D p1,Point3D p2)
     {
@@ -545,6 +588,7 @@ public class WireframeViewer extends Applet
             side[i].dir = new Point3D(m[0][0]*side[i].dir.getX() + m[0][1]*side[i].dir.getY() + m[0][2]*side[i].dir.getZ()
                     ,m[1][0]*side[i].dir.getX() + m[1][1]*side[i].dir.getY() + m[1][2]*side[i].dir.getZ()
                     ,m[2][0]*side[i].dir.getX() + m[2][1]*side[i].dir.getY() + m[2][2]*side[i].dir.getZ());
+            side[i].calcPlane();
         }
 
         sun = new Point3D(m[0][0]*sun.getX() + m[0][1]*sun.getY() + m[0][2]*sun.getZ()
