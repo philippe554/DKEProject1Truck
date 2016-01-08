@@ -39,7 +39,9 @@ public class Container {
     }
     public int[][][] getContainer() {
         return container;
-    }
+            }
+     
+            
     public int getWidth() {
         return width;
     }
@@ -50,4 +52,15 @@ public class Container {
         return height;
     }
     public Point3D[] getVertices() { return vertices; }
+    
+    public void addParcel(Parcel parcel)
+    {
+    for(Point3D point : parcel.getBlockLocations())
+   	   {
+   	   container[point.GetX()][point.GetY()][point.getZ()] = parcel,GetID();
+   	   	
+   	   	   
+   	   }
+    
+    }
 }
