@@ -30,7 +30,7 @@ public class BruteForce
 
     public void parcelSolver()
     {
-       Point3D nextFree = new Point3d(0,0,0);
+       Point3D nextFree = new Point3D(0,0,0);
        
     	
     	for(Parcel p : listOfPackets)
@@ -54,7 +54,7 @@ public class BruteForce
        	   	   }
        	   	 
        	   	   // if not able to palce, then move to rejects
-       	   	   rejectedParcels.add(p)
+       	   	   rejectedParcels.add(p);
        	   	   listOfPackets.remove(p);
        	   }
        	   	   
@@ -79,7 +79,7 @@ public class BruteForce
             //Check that the block is not outside of the container
             else if(point.getX() < 0 || point.getY() < 0 || point.getZ() < 0)
                 return false;
-            else if(point.getX() >= truck.getWidth() || point.getY() >= truck.getheight() || point.getZ() >= truck.getlength())
+            else if(point.getX() >= truck.getWidth() || point.getY() >= truck.getHeight() || point.getZ() >= truck.getLength())
                 return false;
         }
         //If none of the cases apply we can return true, as the location for whole parcel is valid
@@ -98,16 +98,16 @@ public class BruteForce
    */
    public Point3D nextOpen(Point3D start)
    {
-   	   int tmpi = start.getX();
-   	   int tmpj = start.getY();
-   	   int tmpj = start.getY();
+   	   int tmpi = (int)start.getX();
+   	   int tmpj = (int)start.getY();
+   	   int tmpk = (int)start.getZ();
    	   // TODO bounds checking
    	   
    	   	for(int i = tmpi; i< truck.getWidth();i++)
        	   	   {
-       	   	   for(int j = tmpj; j<truck.getheight();j++)
+       	   	   for(int j = tmpj; j<truck.getHeight();j++)
        	   	   	{
-       	   	   	   for(int k = tmpk; k<truck.getlength(); k++)
+       	   	   	   for(int k = tmpk; k<truck.getLength(); k++)
        	   	   	   	   {
        	   	   	   	   if(truck.getContainer()[i][j][k] == -1)
        	   	   	   	   {
@@ -151,7 +151,7 @@ public class BruteForce
        	   	   if(checkLocation(p))
        	   	   	{
        	   	   		truck.addParcel(p);
-       	   	   		loadedParcels.add(p)
+       	   	   		loadedParcels.add(p);
        	   	   		listOfPackets.remove(p);
        	   	   		return true;
        	   	   	}

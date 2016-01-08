@@ -45,7 +45,7 @@ public class Parcel implements Comparable<Parcel>
     {
         ID = numberOfParcels;
         numberOfParcels++;
-        this.blockLocations = (ArrayList<Point3D>) blockLocations.clone();
+        this.blockLocations = (ArrayList<Point3D>)blockLocations.clone();
     }
 
     /** Compares two Parcel-class objects
@@ -245,14 +245,20 @@ public class Parcel implements Comparable<Parcel>
             text += point.toString() + "\n";
         }
         return text;
+    }
         
         /** Gets the number of rotations a piece is capable of
      *
      * @return int of possible rotations
      */
-    public int getRotations(){return rotation;}
-        
+    public int getRotations()
+    {
+    return rotations;
+    
     }
+    
+        
+    
 
     /** Test method
      *
