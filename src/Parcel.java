@@ -3,7 +3,8 @@ import java.util.ArrayList;
 
 public class Parcel implements Comparable<Parcel>
 {
-    public static final int rotations = 24;
+	//maximum number of times a piece can be rotated
+    private int rotations = 1;
     //Locations of the parcel's blocks with respect to the (0,0,0) block
     private ArrayList<Point3D> blockLocations = new ArrayList<Point3D>();
     //Location of the (0,0,0) block with respect to upper container
@@ -244,6 +245,13 @@ public class Parcel implements Comparable<Parcel>
             text += point.toString() + "\n";
         }
         return text;
+        
+        /** Gets the number of rotations a piece is capable of
+     *
+     * @return int of possible rotations
+     */
+    public int getRotations(){return rotation;}
+        
     }
 
     /** Test method
