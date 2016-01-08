@@ -45,10 +45,10 @@ public class Container {
     public int getWidth() {
         return width;
     }
-    public int getlength() {
+    public int getLength() {
         return length;
     }
-    public int getheight() {
+    public int getHeight() {
         return height;
     }
     public Point3D[] getVertices() { return vertices; }
@@ -57,7 +57,7 @@ public class Container {
     {
     for(Point3D point : parcel.getBlockLocations())
    	   {
-   	   container[point.GetX()][point.GetY()][point.getZ()] = parcel,GetID();
+   	   container[(int)point.getX()][(int)point.getY()][(int)point.getZ()] = parcel.getID();
    	   	
    	   	   
    	   }
