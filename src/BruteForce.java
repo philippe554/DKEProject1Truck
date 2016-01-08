@@ -9,7 +9,9 @@ public class BruteForce
     //List of parcels that are fitted to the truck
     private ArrayList<Parcel> listOfPackets;
     //List of pacets that will not be fitted to the truck (created by the process)
-    private ArrayList<Parcel> rejectedPackets = new ArrayList<Parcel>();
+    private ArrayList<Parcel> rejectedParcels = new ArrayList<Parcel>();
+    //List of parcels that have been loaded on truck
+    private ArrayList<Parcel> loadedParcels = new ArrayList<Parcel>();
 
     /** Constructs a new search for a given container and a set of parcels
      *
@@ -28,10 +30,36 @@ public class BruteForce
 
     public void parcelSolver()
     {
-       for(Parcel p : listOfPackets)
+       Point3D nextFree = new Point3d(0,0,0);
+       
+    	
+    	for(Parcel p : listOfPackets)
        {
-            //TODO:
-           //Write this method and comment it
+           // set locus to next available empty cube
+       	   p.setLocation(nextFree);
+       	   // attempt to place parcel there, allowing for rotations
+       	   // if placed, p is now no longer in listOfPackets
+       	   if(placeParcel(p))
+       	   	   {break;}
+       	   else
+       	   {
+       	   	   // now try the next 20 open spaces
+       	   	   for(int i = 0; i<20; i++)
+       	   	   {
+       	   	   nextFree = nextOpen(nextFree);
+       	   	   p.setLocation(nextFree);
+       	   	   if(placeParcel(p))
+       	   	   	   {break;}
+       	   	     	   	   
+       	   	   }
+       	   	 
+       	   	   // if not able to palce, then move to rejects
+       	   	   rejectedParcels.add(p)
+       	   	   listOfPackets.remove(p);
+       	   }
+       	   	   
+       	   
+       	 
        }
     }
 
@@ -56,5 +84,88 @@ public class BruteForce
         }
         //If none of the cases apply we can return true, as the location for whole parcel is valid
         return true;
-    }
+    
+    
+   }
+   
+   
+  
+   
+   /** Finds the next unused block from the supplied parameter
+   *
+   * @param Point3D the starting point
+   * @return Point3D next unused point
+   */
+   public Point3D nextOpen(Point3D start)
+   {
+   	   int tmpi = start.getX();
+   	   int tmpj = start.getY();
+   	   int tmpj = start.getY();
+   	   // TODO bounds checking
+   	   
+   	   	for(int i = tmpi; i< truck.getWidth();i++)
+       	   	   {
+       	   	   for(int j = tmpj; j<truck.getheight();j++)
+       	   	   	{
+       	   	   	   for(int k = tmpk; k<truck.getlength(); k++)
+       	   	   	   	   {
+       	   	   	   	   if(truck.getContainer()[i][j][k] == -1)
+       	   	   	   	   {
+       	   	   	   	   	   
+       	   	   	   	   	   // Can make more exacting choice here. Curently selecting 1x1x1
+       	   	   	   	   	   Point3D tmp = new Point3D(i,j,k);
+       	   	   	   	   	   // if tmp is not the same as start, return it.
+       	   	   	   	   	   if(!tmp.equals(start))
+       	   	   	   	   	   return tmp;
+       	   	   	   	   }
+       	   	   	   	   }
+       	   	   	   
+       	   	   	   }
+       	   	   
+       	   	   
+       	   	   }
+	   
+   	   return null;
+   }
+   
+   public void rotateParcel(int rot, Parcel p)
+   {
+   // rotates parcel to move through all possible iterations.	   
+   if(rot > 12) {p.rotateY(); p.rotateY(); rot = rot-12;}
+   if(rot > 9) {p.rotateZ();}
+   if(rot > 6) {p.rotateZ();}
+   if(rot > 3) {p.rotateZ();}
+   if(rot%3==0) {p.rotateZ();}
+   if(rot%3 == 2){p.rotateX();}
+   	   
+   	   
+   
+   }
+   
+   public boolean placeParcel(Parcel p)
+   {
+    int rotations = p.getRotations();
+       	   // while loop to run through all possible rotations at a point
+       	   while(rotations > 0){
+       	   
+       	   	   if(checkLocation(p))
+       	   	   	{
+       	   	   		truck.addParcel(p);
+       	   	   		loadedParcels.add(p)
+       	   	   		listOfPackets.remove(p);
+       	   	   		return true;
+       	   	   	}
+       	   
+       	   	   	else
+       	   	   		{
+       	   	   			rotateParcel(rotations, p);
+       	   	   		}
+       	     
+       	   }
+       	   
+   return false;
+   }
+   
+   
+   
 }
