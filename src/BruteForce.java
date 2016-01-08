@@ -135,7 +135,7 @@ public class BruteForce
    if(rot > 9) {p.rotateZ();}
    if(rot > 6) {p.rotateZ();}
    if(rot > 3) {p.rotateZ();}
-   if(rot%3==0) {p.rotateZ();}
+   if(rot%3==0) {p.rotateY();}
    if(rot%3 == 2){p.rotateX();}
    	   
    	   
