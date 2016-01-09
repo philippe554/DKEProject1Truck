@@ -13,17 +13,17 @@ import javax.swing.JPanel;
 class TetrisBasedFiller extends JPanel {
 
     class Side{
-        public int a,b,c;
-        double planeA;
-        double planeB;
-        double planeC;
-        double planeD;
-        int colorR=100;
-        int colorB=100;
-        int colorG=100;
-        double minColDistance=0;
-        Point3D center;
-        public void calcPlane(){
+        private int a,b,c;
+        private double planeA;
+        private double planeB;
+        private double planeC;
+        private double planeD;
+        private int colorR=100;
+        private int colorB=100;
+        private int colorG=100;
+        private double minColDistance=0;
+        private Point3D center;
+        private void calcPlane(){
             Point3D d1 = new Point3D(vertices[a].getX()-vertices[c].getX(), //start calc plane second side
                     vertices[a].getY()-vertices[c].getY(),
                     vertices[a].getZ()-vertices[c].getZ());
@@ -44,120 +44,146 @@ class TetrisBasedFiller extends JPanel {
                     (vertices[a].getZ()+vertices[b].getZ()+vertices[c].getZ())/3);
             minColDistance=Math.max(Math.max(center.distance(vertices[a]),center.distance(vertices[b])),center.distance(vertices[c]));
         }
-        public Side(int A,int B,int C) {
+        private Side(int A,int B,int C) {
             a=A;b=B;c=C;
             calcPlane();
         }
     }
+    class RenderThread extends Thread{
+        private int xl,xr,yt,yb;
+        public RenderThread(int xLeft,int xRight, int yTop,int yBottom) {
+            xl=xLeft;
+            xr=xRight;
+            yt=yTop;
+            yb=yBottom;
+        }
+        @Override
+        public void run() {
+            for(int i=xl;i<xr;i++) {
+                for (int j = yt; j < yb; j++) {
+                    Point3D camAngle = new Point3D(camDirection.getX()+((hPixels /2 - i)*camHVector.getX()+(j-vPixels /2)*camVVector.getX())/viewDesity,
+                            camDirection.getY()+((hPixels /2 - i)*camHVector.getY()+(j-vPixels /2)*camVVector.getY())/viewDesity,
+                            camDirection.getZ()+((hPixels /2 - i)*camHVector.getZ()+(j-vPixels /2 )*camVVector.getZ())/viewDesity);
+                    camAngle=camAngle.normalize();
 
-    Point3D[] vertices;
-    Side[] side;
+                    double minDebt=-1;
+                    int clossedSideID = 0;
+                    Point3D clossedCol = null;
+                    for(int k=0;k<side.length;k++)
+                    {
+                        double Nv = side[k].planeA*camAngle.getX() + side[k].planeB*camAngle.getY() + side[k].planeC*camAngle.getZ();
+                        double Nr0 = side[k].planeA*camera.getX() + side[k].planeB*camera.getY() + side[k].planeC*camera.getZ();
 
-    Point3D sun;
-    Point3D camera;
-
-    Point3D camLeftTop;
-    Point3D camHVector;
-    Point3D camVVector;
-
-    int fps=0;
-
-    BufferedImage img;
-    double hViewAngle;
-    double vViewAngle;
-    double viewDesity;
-
-    public static void main(String[]args) {
-        int x=400;
-        int y=400;
-        //make new frame
-        JFrame window = new JFrame("Pentomino");
-        window.setPreferredSize(new Dimension(x,y));
-
-        //set some parameters
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setResizable(false);
-
-        //place in the center of the screen
-        Dimension localDimension = Toolkit.getDefaultToolkit().getScreenSize();
-        window.setLocation((localDimension.width - x) / 2, (localDimension.height - y) / 2);
-
-        //add the PaintComponent to the window
-        TetrisBasedFiller tetrisBasedFiller = new TetrisBasedFiller();
-        window.add(tetrisBasedFiller);
-
-        //fit size
-        window.pack();
-
-        //make visible
-        window.setVisible(true);
-
-        long lastFPSRecordTime=System.currentTimeMillis();
-        int frames=0;
-
-        while(true) {
-            frames++;
-            if(lastFPSRecordTime+1000<System.currentTimeMillis())
-            {
-                tetrisBasedFiller.fps=frames;
-                frames=0;
-                lastFPSRecordTime+=1000;
+                        if (Nv != 0)       // line and plane are not parallel and must intersect
+                        {
+                            double t = (side[k].planeD - Nr0)/Nv;
+                            if(t>=1) {
+                                Point3D col = new Point3D(camera.getX() + t * camAngle.getX(), camera.getY() + t * camAngle.getY(), camera.getZ() + t * camAngle.getZ());
+                                double distance = col.distance(camera);
+                                if (minDebt == -1 || minDebt > distance) {
+                                    if(col.distance(side[k].center)<=side[k].minColDistance) {//if it is not close to the triangle, dont claculate it preciese
+                                        if (PointInTriangle(col, vertices[side[k].a], vertices[side[k].b], vertices[side[k].c])) {
+                                            minDebt = distance;
+                                            clossedSideID = k;
+                                            clossedCol = col;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if(minDebt!=-1) {
+                        img.setRGB(i, j, calcColor(clossedSideID, clossedCol, camAngle));
+                    }else{
+                        img.setRGB(i,j,0);
+                    }
+                }
             }
-            tetrisBasedFiller.rotate();
-            tetrisBasedFiller.renderImage();
-            tetrisBasedFiller.repaint();
-            /*try {
-                Thread.sleep(20);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }*/
         }
-    }
-    protected void paintComponent(Graphics g) {
-        Graphics2D localGraphics2D = (Graphics2D)g;
-        //localGraphics2D.setColor(Color.BLACK);
-        //localGraphics2D.fillRect(0,0,500,500);
-        localGraphics2D.drawImage(img,0,0,null);
-        localGraphics2D.setColor(Color.red);
-        localGraphics2D.drawString(Integer.toString(fps),10,10);
-    }
-    public Point3D subtract3D(Point3D p1,Point3D p2) {
-        return new Point3D(p1.getX()-p2.getX(),p1.getY()-p2.getY(),p1.getZ()-p2.getZ());
-    }
-    public boolean PointInTriangle(Point3D p,Point3D a,Point3D b,Point3D c) {
-        Point3D v0=subtract3D(c,a);
-        Point3D v1=subtract3D(b,a);
-        Point3D v2=subtract3D(p,a);
+        private int calcColor(int sideID,Point3D p,Point3D camAngle){
+            boolean blocked=false;
+            Point3D sunAngle = subtract3D(sun,p);
+            for(int k=0;k<side.length;k++)
+            {
+                if(k!=sideID){
+                    double Nv = side[k].planeA*sunAngle.getX() + side[k].planeB*sunAngle.getY() + side[k].planeC*sunAngle.getZ();
+                    double Nr0 = side[k].planeA*p.getX() + side[k].planeB*p.getY() + side[k].planeC*p.getZ();
 
-        double v0v0 = v0.dotProduct(v0);
-        double v0v1 = v0.dotProduct(v1);
-        double v0v2 = v0.dotProduct(v2);
-        double v1v1 = v1.dotProduct(v1);
-        double v1v2 = v1.dotProduct(v2);
+                    if (Nv != 0)       // line and plane are not parallel and must intersect
+                    {
+                        double t = (side[k].planeD - Nr0)/Nv;
+                        if(t>=0) {
+                            Point3D col = new Point3D(p.getX() + t * sunAngle.getX()
+                                    , p.getY() + t * sunAngle.getY()
+                                    , p.getZ() + t * sunAngle.getZ());
+                            if(col.distance(side[k].center)<=side[k].minColDistance) {//if it is not close to the triangle, dont claculate it preciese
+                                if (PointInTriangle(col, vertices[side[k].a], vertices[side[k].b], vertices[side[k].c])) {
+                                    blocked = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
-        double u = (v1v1*v0v2-v0v1*v1v2)/(v0v0*v1v1-v0v1*v0v1);
-        double v = (v0v0*v1v2-v0v1*v0v2)/(v0v0*v1v1-v0v1*v0v1);
-        if(u>=0 && v>=0 && u<=1 && v<=1 && (u+v)<=1)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
+            //calc normal vector (required for shadow)
+            double shadow=0.5;
+            if(!blocked)
+            {
+                Point3D sideNormal = subtract3D(vertices[side[sideID].a],vertices[side[sideID].b]).crossProduct(
+                        subtract3D(vertices[side[sideID].a],vertices[side[sideID].c])).normalize();
+                if((Math.abs(Math.acos(camAngle.dotProduct(sideNormal)))/Math.PI*180.0)<90) //face it in the diraction of the camera
+                {
+                    sideNormal=new Point3D(-sideNormal.getX(),-sideNormal.getY(),-sideNormal.getZ());
+                }
+                sideNormal=sideNormal.normalize();
+
+                sunAngle=sunAngle.normalize();
+
+                shadow =  1.0-(Math.abs(Math.acos(sideNormal.dotProduct(sunAngle)))/Math.PI);
+                if(shadow<0.5){
+                    shadow=0.5;
+                }
+            }
+            return ((side[sideID].colorR+(int)(100.0*shadow) << 16) | (side[sideID].colorG+(int)(100.0*shadow) << 8) | side[sideID].colorB+(int)(100.0*shadow));
         }
     }
+
+    private Point3D[] vertices;
+    private Side[] side;
+
+    private Point3D sun;
+    private Point3D camera;
+
+    private Point3D camDirection;
+    private Point3D camHVector;
+    private Point3D camVVector;
+
+    private int fps=0;
+
+    private BufferedImage img;
+    private double hViewAngle;
+    private double vViewAngle;
+    private double viewDesity;
+    private double hPixels;
+    private double vPixels;
+
+    private int amountOfThreads=4;
+
     public TetrisBasedFiller() {
         hViewAngle=60.0;
         vViewAngle=hViewAngle;
         viewDesity=5.0;
+        hPixels=viewDesity*hViewAngle;
+        vPixels=viewDesity*vViewAngle;
 
         sun = new Point3D(20,50,0);
 
-        camera = new Point3D(0,5,-10);
+        camera = new Point3D(0,15,-15);
 
-        camLeftTop = new Point3D(-15,15,8);
-        camHVector = new Point3D(0.5,0,0);
-        camVVector = new Point3D(0,-0.5,0);
+        camDirection = new Point3D(0,-8,8);
+        camHVector = new Point3D(0.3,0,0);
+        camVVector = new Point3D(0,-0.3,0);
 
         img = new BufferedImage((int)(hViewAngle*viewDesity), (int)(vViewAngle*viewDesity), BufferedImage.TYPE_INT_RGB);
 
@@ -221,7 +247,85 @@ class TetrisBasedFiller extends JPanel {
         side[10+12] = new Side(1+8,3+8,7+8);//back
         side[11+12] = new Side(1+8,5+8,7+8);
     }
-    public void rotate(){
+    public static void main(String[]args) {
+        int x=400;
+        int y=400;
+        //make new frame
+        JFrame window = new JFrame("Pentomino");
+        window.setPreferredSize(new Dimension(x,y));
+
+        //set some parameters
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setResizable(false);
+
+        //place in the center of the screen
+        Dimension localDimension = Toolkit.getDefaultToolkit().getScreenSize();
+        window.setLocation((localDimension.width - x) / 2, (localDimension.height - y) / 2);
+
+        //add the PaintComponent to the window
+        TetrisBasedFiller tetrisBasedFiller = new TetrisBasedFiller();
+        window.add(tetrisBasedFiller);
+
+        //fit size
+        window.pack();
+
+        //make visible
+        window.setVisible(true);
+
+        long lastFPSRecordTime=System.currentTimeMillis();
+        int frames=0;
+
+        while(true) {
+            frames++;
+            if(lastFPSRecordTime+1000<System.currentTimeMillis())
+            {
+                tetrisBasedFiller.fps=frames;
+                frames=0;
+                lastFPSRecordTime+=1000;
+            }
+            tetrisBasedFiller.rotate();
+            tetrisBasedFiller.renderImage();
+            tetrisBasedFiller.repaint();
+            /*try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }*/
+        }
+    }
+
+    protected void paintComponent(Graphics g) {
+        Graphics2D localGraphics2D = (Graphics2D)g;
+        localGraphics2D.drawImage(img,0,0,null);
+        localGraphics2D.setColor(Color.red);
+        localGraphics2D.drawString(Integer.toString(fps),10,10);
+    }
+    private Point3D subtract3D(Point3D p1,Point3D p2) {
+        return new Point3D(p1.getX()-p2.getX(),p1.getY()-p2.getY(),p1.getZ()-p2.getZ());
+    }
+    private boolean PointInTriangle(Point3D p,Point3D a,Point3D b,Point3D c) {
+        Point3D v0=subtract3D(c,a);
+        Point3D v1=subtract3D(b,a);
+        Point3D v2=subtract3D(p,a);
+
+        double v0v0 = v0.dotProduct(v0);
+        double v0v1 = v0.dotProduct(v1);
+        double v0v2 = v0.dotProduct(v2);
+        double v1v1 = v1.dotProduct(v1);
+        double v1v2 = v1.dotProduct(v2);
+
+        double u = (v1v1*v0v2-v0v1*v1v2)/(v0v0*v1v1-v0v1*v0v1);
+        double v = (v0v0*v1v2-v0v1*v0v2)/(v0v0*v1v1-v0v1*v0v1);
+        if(u>=0 && v>=0 && u<=1 && v<=1 && (u+v)<=1)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    private void rotate(){
         double angle =1/180.0*Math.PI;
 
         double[][] m=new double[3][3];
@@ -237,9 +341,6 @@ class TetrisBasedFiller extends JPanel {
         }
         for(int i=0;i<side.length;i++)
         {
-            /*side[i].dir = new Point3D(m[0][0]*side[i].dir.getX() + m[0][1]*side[i].dir.getY() + m[0][2]*side[i].dir.getZ()
-                    ,m[1][0]*side[i].dir.getX() + m[1][1]*side[i].dir.getY() + m[1][2]*side[i].dir.getZ()
-                    ,m[2][0]*side[i].dir.getX() + m[2][1]*side[i].dir.getY() + m[2][2]*side[i].dir.getZ());*/
             side[i].calcPlane();
         }
 
@@ -247,94 +348,17 @@ class TetrisBasedFiller extends JPanel {
                 ,m[1][0]*sun.getX() + m[1][1]*sun.getY() + m[1][2]*sun.getZ()
                 ,m[2][0]*sun.getX() + m[2][1]*sun.getY() + m[2][2]*sun.getZ());*/
     }
-    public int calcColor(int sideID,Point3D p,Point3D camAngle){
-        boolean blocked=false;
-        Point3D sunAngle = subtract3D(sun,p);
-        for(int k=0;k<side.length;k++)
-        {
-            if(k!=sideID){
-                double Nv = side[k].planeA*sunAngle.getX() + side[k].planeB*sunAngle.getY() + side[k].planeC*sunAngle.getZ();
-                double Nr0 = side[k].planeA*p.getX() + side[k].planeB*p.getY() + side[k].planeC*p.getZ();
-
-                if (Nv != 0)       // line and plane are not parallel and must intersect
-                {
-                    double t = (side[k].planeD - Nr0)/Nv;
-                    if(t>=0) {
-                        Point3D col = new Point3D(p.getX() + t * sunAngle.getX()
-                                , p.getY() + t * sunAngle.getY()
-                                , p.getZ() + t * sunAngle.getZ());
-                        if(col.distance(side[k].center)<=side[k].minColDistance) {//if it is not close to the triangle, dont claculate it preciese
-                            if (PointInTriangle(col, vertices[side[k].a], vertices[side[k].b], vertices[side[k].c])) {
-                                blocked = true;
-                            }
-                        }
-                    }
-                }
-            }
+    private void renderImage(){
+        RenderThread RT[]= new RenderThread[amountOfThreads];
+        for(int i=0;i<amountOfThreads;i++) {
+            RT[i] = new RenderThread((int)(hPixels*i / amountOfThreads), (int) (hPixels* (i+1) / amountOfThreads), 0, (int) (vPixels));
+            RT[i].start();
         }
-
-        //calc normal vector (required for shadow)
-        double shadow=0.5;
-        if(!blocked)
-        {
-            Point3D sideNormal = subtract3D(vertices[side[sideID].a],vertices[side[sideID].b]).crossProduct(
-                    subtract3D(vertices[side[sideID].a],vertices[side[sideID].c])).normalize();
-            if((Math.abs(Math.acos(camAngle.dotProduct(sideNormal)))/Math.PI*180.0)<90) //face it in the diraction of the camera
-            {
-                sideNormal=new Point3D(-sideNormal.getX(),-sideNormal.getY(),-sideNormal.getZ());
-            }
-            sideNormal=sideNormal.normalize();
-
-            sunAngle=sunAngle.normalize();
-
-            shadow =  1.0-(Math.abs(Math.acos(sideNormal.dotProduct(sunAngle)))/Math.PI);
-            if(shadow<0.5){
-               shadow=0.5;
-            }
-        }
-        return ((side[sideID].colorR+(int)(100.0*shadow) << 16) | (side[sideID].colorG+(int)(100.0*shadow) << 8) | side[sideID].colorB+(int)(100.0*shadow));
-    }
-    public void renderImage(){
-        for(int i=0;i<vViewAngle*viewDesity;i++)
-        {
-            for(int j=0;j<vViewAngle*viewDesity;j++)
-            {
-                Point3D camAngle = new Point3D(camLeftTop.getX()+(i*camHVector.getX()+j*camVVector.getX())/viewDesity,
-                        camLeftTop.getY()+(i*camHVector.getY()+j*camVVector.getY())/viewDesity,
-                        camLeftTop.getZ()+(i*camHVector.getZ()+j*camVVector.getZ())/viewDesity);
-                camAngle=camAngle.normalize();
-
-                double minDebt=-1;
-                int clossedSideID = 0;
-                Point3D clossedCol = null;
-                for(int k=0;k<side.length;k++)
-                {
-                    double Nv = side[k].planeA*camAngle.getX() + side[k].planeB*camAngle.getY() + side[k].planeC*camAngle.getZ();
-                    double Nr0 = side[k].planeA*camera.getX() + side[k].planeB*camera.getY() + side[k].planeC*camera.getZ();
-
-                    if (Nv != 0)       // line and plane are not parallel and must intersect
-                    {
-                        double t = (side[k].planeD - Nr0)/Nv;
-                        if(t>=1) {
-                            Point3D col = new Point3D(camera.getX() + t * camAngle.getX(), camera.getY() + t * camAngle.getY(), camera.getZ() + t * camAngle.getZ());
-                            double distance = col.distance(camera);
-                            if (minDebt == -1 || minDebt > distance) {
-                                if(col.distance(side[k].center)<=side[k].minColDistance) {//if it is not close to the triangle, dont claculate it preciese
-                                    if (PointInTriangle(col, vertices[side[k].a], vertices[side[k].b], vertices[side[k].c])) {
-                                        minDebt = distance;
-                                        clossedSideID = k;
-                                        clossedCol = col;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                if(minDebt!=-1) {
-                    img.setRGB(i, j, calcColor(clossedSideID, clossedCol, camAngle));
-                }else{
-                    img.setRGB(i,j,0);
-                }
+        for(int i=0;i<amountOfThreads;i++) {
+            try {
+                RT[i].join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
