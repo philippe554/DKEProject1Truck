@@ -7,6 +7,8 @@ public class Parcel implements Comparable<Parcel>
     private int rotations = 1;
     //Locations of the parcel's blocks with respect to the (0,0,0) block
     private ArrayList<Point3D> blockLocations = new ArrayList<Point3D>();
+    //Locations of the vertices of the parcel
+    private ArrayList<Point3D> vertices = new ArrayList<Point3D>();
     //Location of the (0,0,0) block with respect to upper container
     private Point3D location = new Point3D(0,0,0);
     //ID to recognise each parcel
@@ -274,6 +276,63 @@ public class Parcel implements Comparable<Parcel>
     
     }
     
+       /** Generates the vertices of a cuboid parcel
+     *
+     * @param Arraylist of Point3D 
+     */
+     
+     private void setVertices(ArrayList<Point3D> blocks)
+     {
+    	
+        int max_x = (int)location.getX()+1;
+         int max_y = (int)location.getY()+1;
+        int max_z = (int)location.getZ()+1;
+        
+        // find the vertices of cuboid
+        for(Point3D point : blocks)
+        {
+           if((point.getX()+1) > max_x) max_x = (int)point.getX()+1;
+           if((point.getY()+1) > max_y) max_y = (int)point.getY()+1;
+           if((point.getZ()+1) > max_z) max_z = (int)point.getZ()+1;
+        }
+     
+        for(int i = 0; i<2; i++)
+        	{
+        	for(int j = 0; j<2; i++)
+        		{
+        			for(int k = 0; k<2; i++)
+        			{
+        				int tmp_x = k*max_x;
+        				int tmp_y = j*max_y;
+        				int tmp_z = i*max_z;
+        				vertices.add(new Point3D(tmp_x,tmp_y,tmp_z));
+        			
+        			}
+        		}
+        	}
+        
+     
+     }
+    
+    
+    /** Gets the vertices of a cuboid parcel relevent to a higher container
+     *
+     * @return Arraylist of Point3D of the vertices
+     */
+         
+    public ArrayList<Point3D> getVertices()
+    {
+        setVertices(blockLocations);
+    	ArrayList<Point3D> result = new ArrayList<Point3D>();
+         
+         for(Point3D point : vertices)
+        {
+            result.add(point.add(location));
+        }
+        
+        
+        return result;
+    }
         
     
 
