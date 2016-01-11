@@ -2,27 +2,28 @@ import javafx.geometry.Point3D;
 
 public class ParcelC extends Parcel
 {
-    private double value;
+
+    public static final int rotations = 1;
 
     public ParcelC()
     {
         super();
         construct();
-        value = 5;
+        setValue(5);
     }
 
     public ParcelC(double value)
     {
         super();
         construct();
-        this.value = value;
+        setValue(value);
     }
 
     public ParcelC(double value, Point3D location)
     {
         super();
         construct();
-        this.value = value;
+        setValue(value);
         this.setLocation(location);
     }
 
