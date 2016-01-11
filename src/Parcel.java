@@ -55,7 +55,7 @@ public class Parcel implements Comparable<Parcel>
      */
     public int compareTo(Parcel anotherParcel)
     {
-        if(anotherParcel.getValue() > this.value)
+        /*if(anotherParcel.getValue() > this.value)
         {
             return -1;
         }
@@ -65,7 +65,8 @@ public class Parcel implements Comparable<Parcel>
         }
         else
             return 0;
-
+*/
+        return Double.compare(this.value,anotherParcel.value);
     }
 
     /** Gets the value of the parcel divided by its volume
