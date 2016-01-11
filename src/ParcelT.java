@@ -27,7 +27,8 @@ public class ParcelT extends Parcel
         this.setLocation(location);
     }
 
-    private void construct()
+    @Override
+    protected void construct()
     {
         this.add(new Point3D(1,0,1));
         this.add(new Point3D(2,0,1));

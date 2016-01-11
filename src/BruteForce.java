@@ -39,27 +39,25 @@ public class BruteForce
        	   p.setLocation(nextFree);
        	   // attempt to place parcel there, allowing for rotations
        	   // if placed, p is now no longer in listOfPackets
-       	   if(placeParcel(p))
-       	   	   {break;}
-       	   else
+           boolean tmp = placeParcel(p);
+       	   if(!tmp)
        	   {
        	   	   // now try the next 20 open spaces
        	   	   for(int i = 0; i<20; i++)
-       	   	   {
-       	   	   nextFree = nextOpen(nextFree);
-       	   	   p.setLocation(nextFree);
-       	   	   if(placeParcel(p))
-       	   	   	   {break;}
-       	   	     	   	   
-       	   	   }
-       	   	 
+               {
+                   if(!nextFree.equals(nextOpen(nextFree)))
+                       nextFree = nextOpen(nextFree);
+                   else
+                       i=20;
+                   p.setLocation(nextFree);
+                   if (placeParcel(p))
+                   {
+                       i=20;
+                   }
+               }
        	   	   // if not able to palce, then move to rejects
        	   	   rejectedParcels.add(p);
-       	   	   listOfPackets.remove(p);
        	   }
-       	   	   
-       	   
-       	 
        }
     }
 
@@ -73,13 +71,14 @@ public class BruteForce
         //Check for each block in the parcel
         for(Point3D point : parcel.getBlockLocations())
         {
-            //Check that space occupied by the block is free
-            if(truck.getContainer()[(int)point.getX()][(int)point.getY()][(int)point.getZ()] != -1)
-                return false;
+
             //Check that the block is not outside of the container
-            else if(point.getX() < 0 || point.getY() < 0 || point.getZ() < 0)
+            if(point.getX() < 0 || point.getY() < 0 || point.getZ() < 0)
                 return false;
             else if(point.getX() >= truck.getWidth() || point.getY() >= truck.getHeight() || point.getZ() >= truck.getLength())
+                return false;
+            //Check that space occupied by the block is free
+            else if(truck.getContainer()[(int)point.getX()][(int)point.getY()][(int)point.getZ()] != -1)
                 return false;
         }
         //If none of the cases apply we can return true, as the location for whole parcel is valid
@@ -93,7 +92,7 @@ public class BruteForce
    
    /** Finds the next unused block from the supplied parameter
    *
-   * @param Point3D the starting point
+   * @param start the starting point
    * @return Point3D next unused point
    */
    public Point3D nextOpen(Point3D start)
@@ -101,7 +100,6 @@ public class BruteForce
    	   int tmpi = (int)start.getX();
    	   int tmpj = (int)start.getY();
    	   int tmpk = (int)start.getZ();
-   	   // TODO bounds checking
    	   
    	   	for(int i = tmpi; i< truck.getWidth();i++)
        	   	   {
@@ -109,23 +107,22 @@ public class BruteForce
        	   	   	{
        	   	   	   for(int k = tmpk; k<truck.getLength(); k++)
        	   	   	   	   {
-       	   	   	   	   if(truck.getContainer()[i][j][k] == -1)
-       	   	   	   	   {
-       	   	   	   	   	   
-       	   	   	   	   	   // Can make more exacting choice here. Curently selecting 1x1x1
-       	   	   	   	   	   Point3D tmp = new Point3D(i,j,k);
-       	   	   	   	   	   // if tmp is not the same as start, return it.
-       	   	   	   	   	   if(!tmp.equals(start))
-       	   	   	   	   	   return tmp;
-       	   	   	   	   }
-       	   	   	   	   }
-       	   	   	   
+                           if(truck.getContainer()[i][j][k] == -1)
+                           {
+
+                               // Can make more exacting choice here. Currently selecting 1x1x1
+                               Point3D tmp = new Point3D(i,j,k);
+                               // if tmp is not the same as start, return it.
+                               if(!tmp.equals(start))
+                                   return tmp;
+                           }
+                       }
+                    tmpk = 0;
        	   	   	   }
-       	   	   
-       	   	   
+                   tmpj = 0;
        	   	   }
 	   
-   	   return null;
+   	   return start;
    }
    
    public void rotateParcel(int rot, Parcel p)
@@ -144,28 +141,51 @@ public class BruteForce
    
    public boolean placeParcel(Parcel p)
    {
-    int rotations = p.getRotations();
+       int rotations = p.getRotations();
        	   // while loop to run through all possible rotations at a point
-       	   while(rotations > 0){
-       	   
+       	   while(rotations > 0)
+           {
        	   	   if(checkLocation(p))
        	   	   	{
        	   	   		truck.addParcel(p);
        	   	   		loadedParcels.add(p);
-       	   	   		listOfPackets.remove(p);
        	   	   		return true;
        	   	   	}
-       	   
        	   	   	else
-       	   	   		{
-       	   	   			rotateParcel(rotations, p);
-       	   	   		}
-       	     
+                {
+                    p.rebuild();
+       	   	    	rotateParcel(rotations, p);
+                    rotations--;
+       	   	    }
        	   }
        	   
-   return false;
+       return false;
    }
    
-   
+   public static void main(String[] args)
+   {
+       Container container = new Container(5,5,5);
+       ArrayList<Parcel> packets = new ArrayList<Parcel>();
+       for(int i = 0; i < 100; i++)
+           packets.add(new ParcelT());
+
+       BruteForce solver = new BruteForce(container, packets);
+       solver.parcelSolver();
+
+       for(int i = 0; i < container.getContainer().length; i++)
+       {
+           for(int j = 0; j < container.getContainer()[0].length; j++)
+           {
+               for(int k = 0; k < container.getContainer()[0][0].length; k++)
+               {
+                   System.out.print(container.getContainer()[i][j][k]);
+               }
+               System.out.println();
+           }
+           System.out.println();
+           System.out.println();
+           System.out.println();
+       }
+   }
    
 }

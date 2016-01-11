@@ -14,6 +14,23 @@ public class Parcel implements Comparable<Parcel>
     static int numberOfParcels = 0;
     private double value;
 
+    /** Parcel Builder
+     *
+     */
+    protected void construct()
+    {
+        blockLocations.add(new Point3D(0,0,0));
+    }
+
+    /** Rebuilds the parcel to the original state
+     *
+     */
+    public void rebuild()
+    {
+        blockLocations = new ArrayList<Point3D>();
+        this.construct();
+    }
+
     /** Default constructor. Contains a block at (0,0,0) at the location (0,0,0)
      *
      */
