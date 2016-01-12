@@ -17,6 +17,7 @@ public class Greedy {
     private ArrayList<Parcel> rejectedParcels = new ArrayList<Parcel>();
     //List of parcels that have been loaded on truck
     private ArrayList<Parcel> loadedParcels = new ArrayList<Parcel>();
+
     public static void main(String[]args){
         ArrayList<Parcel> list = new ArrayList<Parcel>();
         list.add(new ParcelC());list.add(new ParcelC());list.add(new ParcelC());list.add(new ParcelC());

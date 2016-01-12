@@ -172,6 +172,8 @@ class TetrisBasedFiller extends JPanel {
 
     private int amountOfThreads=4;
 
+    public double[]values = {0};
+
     public TetrisBasedFiller() {
         hViewAngle=60.0;
         vViewAngle=hViewAngle;
@@ -375,6 +377,10 @@ class TetrisBasedFiller extends JPanel {
         localGraphics2D.setColor(Color.red);
         localGraphics2D.drawString("FPS: "+Integer.toString(fps),10,10);
         localGraphics2D.drawString("Sides: "+Integer.toString(side.size()),10,30);
+        for(int i=0;i<values.length;i++)
+        {
+            localGraphics2D.drawString("Value "+Integer.toString(i)+": "+Double.toString(values[i]),10,50 + 20*i);
+        }
     }
     private Point3D subtract3D(Point3D p1,Point3D p2) {
         return new Point3D(p1.getX()-p2.getX(),p1.getY()-p2.getY(),p1.getZ()-p2.getZ());
