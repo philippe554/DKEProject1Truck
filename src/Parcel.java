@@ -1,4 +1,6 @@
 import javafx.geometry.Point3D;
+
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Parcel implements Comparable<Parcel>
@@ -14,21 +16,21 @@ public class Parcel implements Comparable<Parcel>
     static int numberOfParcels = 0;
     private double value;
 
-    /** Parcel Builder
-     *
-     */
-    protected void construct()
+    @Override
+    public Parcel clone()
     {
-        blockLocations.add(new Point3D(0,0,0));
-    }
-
-    /** Rebuilds the parcel to the original state
-     *
-     */
-    public void rebuild()
-    {
-        blockLocations = new ArrayList<Point3D>();
-        this.construct();
+        ArrayList<Point3D> newBlocks = new ArrayList<Point3D>();
+        for(Point3D point : blockLocations)
+        {
+            Point3D newPoint = new Point3D(point.getX(),point.getY(),point.getZ());
+            newBlocks.add(newPoint);
+        }
+        Point3D newLocation = new Point3D(this.location.getX(),this.location.getY(),this.location.getZ());
+        Parcel cloneParcel = new Parcel(newBlocks, newLocation);
+        cloneParcel.setValue(this.getValue());
+        cloneParcel.setRotations(this.getRotations());
+        cloneParcel.setID(this.getID());
+        return cloneParcel;
     }
 
     /** Default constructor. Contains a block at (0,0,0) at the location (0,0,0)
@@ -65,24 +67,23 @@ public class Parcel implements Comparable<Parcel>
         this.blockLocations = (ArrayList<Point3D>)blockLocations.clone();
     }
 
-    /** Compares two Parcel-class objects
+    /** Compares two Parcel-class objects by their value/volume ratio
      *
      * @param anotherParcel Object to be compared to
      * @return 0 if parcels are equal, -1 if anotherParcel is larger and 1 if smaller
      */
+    @Override
     public int compareTo(Parcel anotherParcel)
     {
-        if(anotherParcel.getValue() > this.value)
+        if(anotherParcel.getVolumetricValue() > this.getVolumetricValue())
         {
             return -1;
         }
-        else if(anotherParcel.getValue() < this.value)
+        else if(anotherParcel.getVolumetricValue() < this.getVolumetricValue())
         {
             return 1;
         }
-        else
-            return 0;
-
+        return 0;
     }
 
     /** Gets the value of the parcel divided by its volume
@@ -91,8 +92,10 @@ public class Parcel implements Comparable<Parcel>
      */
     public double getValue()
     {
-        return (this.value/blockLocations.size());
+        return this.value;
     }
+
+    public double getVolumetricValue() {return this.value/blockLocations.size();}
 
     /** Sets parcel's value to a certain double
      *
@@ -264,7 +267,7 @@ public class Parcel implements Comparable<Parcel>
         return text;
     }
         
-        /** Gets the number of rotations a piece is capable of
+    /** Gets the number of rotations a piece is capable of
      *
      * @return int of possible rotations
      */
@@ -273,27 +276,40 @@ public class Parcel implements Comparable<Parcel>
     return rotations;
     
     }
-    
-        
-    
-
-    /** Test method
+    /** Parcel Builder
      *
-     * @param args Not used
      */
+    protected void construct()
+    {
+        blockLocations.add(new Point3D(0,0,0));
+    }
+
+    /** Rebuilds the parcel to the original state
+     *
+     */
+    public void rebuild()
+    {
+        blockLocations = new ArrayList<Point3D>();
+        this.construct();
+    }
+
+    /** Sets the number of rotations for the parcel
+     *
+     * @param rotations number of possible rotations it can have
+     */
+    public void setRotations(int rotations) {this.rotations = rotations;}
+
+    /** Sets the ID for the parcel. Meant for cloning
+     *
+     * @param ID The wanted ID
+     */
+    public void setID(int ID){this.ID = ID;}
+
     public static void main(String[] args)
     {
-        Parcel test = new Parcel();
-        test.add(new Point3D(1,1,1));
-        test.add(new Point3D(1,1,0));
-        test.add(new Point3D(0,1,1));
-        test.add(new Point3D(0,1,0));
-        System.out.println(test.getLocation());
-        System.out.println("\n" + test.getBlockLocations() + "\n");
-        test.translate(new Point3D(1,1,1));
-        System.out.println(test.getLocation());
-        test.setLocation(-1,-1,-1);
-        System.out.println(test.getLocation());
-        System.out.println("\n" + test.getBlockLocations() + "\n");
+        Parcel parcel = new ParcelA();
+        System.out.println(parcel);
+        Parcel cloneParcel = parcel.clone();
+        System.out.println(cloneParcel);
     }
 }
