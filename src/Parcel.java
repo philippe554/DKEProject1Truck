@@ -1,6 +1,4 @@
 import javafx.geometry.Point3D;
-
-import java.awt.*;
 import java.util.ArrayList;
 
 public class Parcel implements Comparable<Parcel>
@@ -12,7 +10,7 @@ public class Parcel implements Comparable<Parcel>
     //Locations of the vertices of the parcel
     private ArrayList<Point3D> vertices = new ArrayList<Point3D>();
     //Locations of the sides of the parcel
-    private List<Point3D[]> sides = new ArrayList<Point3D[]>();
+    private ArrayList<Point3D[]> sides = new ArrayList<Point3D[]>();
     //Location of the (0,0,0) block with respect to upper container
     private Point3D location = new Point3D(0,0,0);
     //ID to recognise each parcel
@@ -305,7 +303,7 @@ public class Parcel implements Comparable<Parcel>
 
        /** Generates the vertices of a cuboid parcel
      *
-     * @param Arraylist of Point3D
+     * @param blocks of Point3D
      */
 
      private void setVertices(ArrayList<Point3D> blocks)
@@ -329,9 +327,9 @@ public class Parcel implements Comparable<Parcel>
 
         for(int i = 0; i<2; i++)
         	{
-        	for(int j = 0; j<2; i++)
+        	for(int j = 0; j<2; j++)
         		{
-        			for(int k = 0; k<2; i++)
+        			for(int k = 0; k<2; k++)
         			{
         				int tmp_x = k*max_x;
         				int tmp_y = j*max_y;
@@ -367,12 +365,11 @@ public class Parcel implements Comparable<Parcel>
 
      /** Gets the sides of a cuboid parcel, relevent to a higher container
      *
-     * @Param temp 0 for vertices 0-7, 8 for vertices 8-15
+     * @param temp 0 for vertices 0-7, 8 for vertices 8-15
      */
     private void setSides(int temp)
     {
     	// empty sides list
-    	sides = = new ArrayList<Point3D[]>();
 
     Point3D[] s1 = {vertices.get(temp), vertices.get(temp+1), vertices.get(temp+2)};
     	Point3D[] s2 = {vertices.get(temp), vertices.get(temp+1), vertices.get(temp+4)};
@@ -413,14 +410,13 @@ public class Parcel implements Comparable<Parcel>
 
     public ArrayList<Point3D[]> getSides()
     {
-       getVertices();
+        getVertices();
         int tmp = vertices.size();
-    	List<Point3D[]> result = new ArrayList<Point3D[]>();
-    	if(tmp > 9)
-    		setSides(8);
+        sides = new ArrayList<Point3D[]>();
 
-    	setSides(0);
-
+        if(tmp > 9)
+            setSides(8);
+        setSides(0);
 
         return sides;
     }
