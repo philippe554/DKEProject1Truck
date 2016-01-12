@@ -3,16 +3,37 @@ import java.util.ArrayList;
 
 public class Parcel implements Comparable<Parcel>
 {
-	//maximum number of times a piece can be rotated
+    //maximum number of times a piece can be rotated
     private int rotations = 1;
     //Locations of the parcel's blocks with respect to the (0,0,0) block
     private ArrayList<Point3D> blockLocations = new ArrayList<Point3D>();
+    //Locations of the vertices of the parcel
+    private ArrayList<Point3D> vertices = new ArrayList<Point3D>();
+    //Locations of the sides of the parcel
+    private ArrayList<Point3D[]> sides = new ArrayList<Point3D[]>();
     //Location of the (0,0,0) block with respect to upper container
     private Point3D location = new Point3D(0,0,0);
     //ID to recognise each parcel
     private int ID;
     static int numberOfParcels = 0;
     private double value;
+
+    @Override
+    public Parcel clone()
+    {
+        ArrayList<Point3D> newBlocks = new ArrayList<Point3D>();
+        for(Point3D point : blockLocations)
+        {
+            Point3D newPoint = new Point3D(point.getX(),point.getY(),point.getZ());
+            newBlocks.add(newPoint);
+        }
+        Point3D newLocation = new Point3D(this.location.getX(),this.location.getY(),this.location.getZ());
+        Parcel cloneParcel = new Parcel(newBlocks, newLocation);
+        cloneParcel.setValue(this.getValue());
+        cloneParcel.setRotations(this.getRotations());
+        cloneParcel.setID(this.getID());
+        return cloneParcel;
+    }
 
     /** Default constructor. Contains a block at (0,0,0) at the location (0,0,0)
      *
@@ -48,25 +69,23 @@ public class Parcel implements Comparable<Parcel>
         this.blockLocations = (ArrayList<Point3D>)blockLocations.clone();
     }
 
-    /** Compares two Parcel-class objects
+    /** Compares two Parcel-class objects by their value/volume ratio
      *
      * @param anotherParcel Object to be compared to
      * @return 0 if parcels are equal, -1 if anotherParcel is larger and 1 if smaller
      */
+    @Override
     public int compareTo(Parcel anotherParcel)
     {
-        /*if(anotherParcel.getValue() > this.value)
+        if(anotherParcel.getVolumetricValue() > this.getVolumetricValue())
         {
             return -1;
         }
-        else if(anotherParcel.getValue() < this.value)
+        else if(anotherParcel.getVolumetricValue() < this.getVolumetricValue())
         {
             return 1;
         }
-        else
-            return 0;
-*/
-        return Double.compare(this.value,anotherParcel.value);
+        return 0;
     }
 
     /** Gets the value of the parcel divided by its volume
@@ -75,8 +94,10 @@ public class Parcel implements Comparable<Parcel>
      */
     public double getValue()
     {
-        return (this.value/blockLocations.size());
+        return this.value;
     }
+
+    public double getVolumetricValue() {return this.value/blockLocations.size();}
 
     /** Sets parcel's value to a certain double
      *
@@ -247,24 +268,170 @@ public class Parcel implements Comparable<Parcel>
         }
         return text;
     }
-        
-        /** Gets the number of rotations a piece is capable of
+
+    /** Gets the number of rotations a piece is capable of
      *
      * @return int of possible rotations
      */
     public int getRotations()
     {
-    return rotations;
-    
-    }
-    
-        
-    
+        return rotations;
 
-    /** Test method
+    }
+    /** Parcel Builder
      *
-     * @param args Not used
      */
+    protected void construct()
+    {
+        blockLocations.add(new Point3D(0,0,0));
+    }
+
+    /** Rebuilds the parcel to the original state
+     *
+     */
+    public void rebuild()
+    {
+        blockLocations = new ArrayList<Point3D>();
+        this.construct();
+    }
+
+    /** Sets the number of rotations for the parcel
+     *
+     * @param rotations number of possible rotations it can have
+     */
+    public void setRotations(int rotations) {this.rotations = rotations;}
+
+    /** Generates the vertices of a cuboid parcel
+     *
+     * @param blocks of Point3D
+     */
+
+    private void setVertices(ArrayList<Point3D> blocks)
+    {
+
+        int max_x = (int)location.getX()+1;
+        int max_y = (int)location.getY()+1;
+        int max_z = (int)location.getZ()+1;
+
+        // find the vertices of cuboid
+
+        // first, reset the vertices list
+        vertices = new ArrayList<Point3D>();
+
+        for(Point3D point : blocks)
+        {
+            if((point.getX()+1) > max_x) max_x = (int)point.getX()+1;
+            if((point.getY()+1) > max_y) max_y = (int)point.getY()+1;
+            if((point.getZ()+1) > max_z) max_z = (int)point.getZ()+1;
+        }
+
+        for(int i = 0; i<2; i++)
+        {
+            for(int j = 0; j<2; j++)
+            {
+                for(int k = 0; k<2; k++)
+                {
+                    int tmp_x = k*max_x;
+                    int tmp_y = j*max_y;
+                    int tmp_z = i*max_z;
+                    vertices.add(new Point3D(tmp_x,tmp_y,tmp_z));
+
+                }
+            }
+        }
+
+
+    }
+
+
+    /** Gets the vertices of a cuboid parcel relevent to a higher container
+     *
+     * @return Arraylist of Point3D of the vertices
+     */
+
+    public ArrayList<Point3D> getVertices()
+    {
+        setVertices(blockLocations);
+        ArrayList<Point3D> result = new ArrayList<Point3D>();
+
+        for(Point3D point : vertices)
+        {
+            result.add(point.add(location));
+        }
+
+
+        return result;
+    }
+
+    /** Gets the sides of a cuboid parcel, relevent to a higher container
+     *
+     * @param temp 0 for vertices 0-7, 8 for vertices 8-15
+     */
+    private void setSides(int temp)
+    {
+        // empty sides list
+
+        Point3D[] s1 = {vertices.get(temp), vertices.get(temp+1), vertices.get(temp+2)};
+        Point3D[] s2 = {vertices.get(temp), vertices.get(temp+1), vertices.get(temp+4)};
+        Point3D[] s3 = {vertices.get(temp), vertices.get(temp+2), vertices.get(temp+4)};
+        Point3D[] s4 = {vertices.get(temp+1), vertices.get(temp+2), vertices.get(temp+3)};
+        Point3D[] s5 = {vertices.get(temp+1), vertices.get(temp+3), vertices.get(temp+7)};
+        Point3D[] s6 = {vertices.get(temp+2), vertices.get(temp+3), vertices.get(temp+7)};
+        Point3D[] s7 = {vertices.get(temp+1), vertices.get(temp+4), vertices.get(temp+5)};
+        Point3D[] s8 = {vertices.get(temp+1), vertices.get(temp+5), vertices.get(temp+7)};
+        Point3D[] s9 = {vertices.get(temp+4), vertices.get(temp+5), vertices.get(temp+7)};
+        Point3D[] s10 = {vertices.get(temp+2), vertices.get(temp+4), vertices.get(temp+6)};
+        Point3D[] s11 = {vertices.get(temp+4), vertices.get(temp+6), vertices.get(temp+7)};
+        Point3D[] s12 = {vertices.get(temp+2), vertices.get(temp+6), vertices.get(temp+7)};
+
+        sides.add(s1);
+        sides.add(s2);
+        sides.add(s3);
+        sides.add(s4);
+        sides.add(s5);
+        sides.add(s6);
+        sides.add(s7);
+        sides.add(s8);
+        sides.add(s9);
+        sides.add(s10);
+        sides.add(s11);
+        sides.add(s12);
+
+
+
+    }
+
+
+
+    /** Gets the sides of a cuboid parcel, relevent to a higher container
+     *
+     * @return An arraylist of arrays of Point3D objects
+     */
+
+    public ArrayList<Point3D[]> getSides()
+    {
+        getVertices();
+        int tmp = vertices.size();
+        sides = new ArrayList<Point3D[]>();
+
+        if(tmp > 9)
+            setSides(8);
+        setSides(0);
+
+        return sides;
+    }
+
+
+
+
+
+
+    /** Sets the ID for the parcel. Meant for cloning
+     *
+     * @param ID The wanted ID
+     */
+    public void setID(int ID){this.ID = ID;}
+
     public static void main(String[] args)
     {
         Parcel test = new Parcel();
