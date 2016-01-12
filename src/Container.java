@@ -1,5 +1,7 @@
 import javafx.geometry.Point3D;
 
+import java.util.ArrayList;
+
 public class Container {
 
     public int width;
@@ -7,6 +9,7 @@ public class Container {
     public int height;
     public int[][][] container;
     Point3D[] vertices;
+    ArrayList<Parcel> containedParcels = new ArrayList<Parcel>();
 
     public Container(int width,int length,int height ){
         this.width= width;
@@ -49,17 +52,23 @@ public class Container {
         return height;
     }
     public Point3D[] getVertices() { return vertices; }
-    
+
+    /** Prints the given parcel to the container by its ID
+     *
+     * @param parcel
+     */
     public void addParcel(Parcel parcel)
     {
         for(Point3D point : parcel.getBlockLocations())
-   	   {
-   	    container[(int)point.getX()][(int)point.getY()][(int)point.getZ()] = parcel.getID();
-   	   }
+   	    {
+   	        container[(int)point.getX()][(int)point.getY()][(int)point.getZ()] = parcel.getID();
+   	    }
+        containedParcels.add(parcel.clone());
     }
 
-    public void removeParcel(int ID)
+    public void removeParcel(Parcel parcel)
     {
+        int ID = parcel.getID();
         for(int i = 0; i < container.length; i++)
         {
             for(int j = 0; j < container[0].length; j++)
@@ -70,6 +79,63 @@ public class Container {
                         container[i][j][k] = -1;
                 }
             }
+        }
+        containedParcels.remove(parcel);
+    }
+
+    /** Clones the current container
+     *
+     * @return A deep clone of current container
+     */
+    @Override
+    public Container clone()
+    {
+        Container newContainer = new Container(this.width,this.length,this.height);
+        ArrayList<Parcel> newContained = new ArrayList<Parcel>();
+        for(Parcel p : containedParcels)
+        {
+            newContained.add(p.clone());
+        }
+        for(Parcel p : newContained)
+        {
+            newContainer.addParcel(p);
+        }
+        return newContainer;
+    }
+
+    public ArrayList<Parcel> getContainedParcels() {return containedParcels;}
+
+    public static void main(String[] args)
+    {
+        Container container = new Container(5,5,5);
+        Parcel t = new ParcelT();
+        container.addParcel(t);
+        for(int[][] k : container.getContainer())
+        {
+            for(int[] j : k)
+            {
+                for(int i : j)
+                {
+                    System.out.print(i);
+                }
+                System.out.println();
+            }
+            System.out.println();
+            System.out.println();
+        }
+        Container newContainer = container.clone();
+        for(int[][] k : newContainer.getContainer())
+        {
+            for(int[] j : k)
+            {
+                for(int i : j)
+                {
+                    System.out.print(i);
+                }
+                System.out.println();
+            }
+            System.out.println();
+            System.out.println();
         }
     }
 }

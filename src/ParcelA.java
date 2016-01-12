@@ -8,13 +8,12 @@ public class ParcelA extends Parcel
             They are ment to make managing parcels easier.
      */
 
-    public static final int rotations = 3;
-
     public ParcelA()
     {
         super();
         construct();
         setValue(3);
+        setRotations(3);
     }
 
     public ParcelA(double value)
@@ -22,6 +21,7 @@ public class ParcelA extends Parcel
         super();
         construct();
         setValue(value);
+        setRotations(3);
     }
 
     public ParcelA(double value, Point3D location)
@@ -30,6 +30,7 @@ public class ParcelA extends Parcel
         construct();
         setValue(value);
         this.setLocation(location);
+        setRotations(3);
     }
 
     @Override
