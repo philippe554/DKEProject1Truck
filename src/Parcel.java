@@ -7,12 +7,33 @@ public class Parcel implements Comparable<Parcel>
     private int rotations = 1;
     //Locations of the parcel's blocks with respect to the (0,0,0) block
     private ArrayList<Point3D> blockLocations = new ArrayList<Point3D>();
+    //Locations of the vertices of the parcel
+    private ArrayList<Point3D> vertices = new ArrayList<Point3D>();
+    //Locations of the sides of the parcel
+    private List<Point3D[]> sides = new ArrayList<Point3D[]>();
     //Location of the (0,0,0) block with respect to upper container
     private Point3D location = new Point3D(0,0,0);
     //ID to recognise each parcel
     private int ID;
     static int numberOfParcels = 0;
     private double value;
+
+    /** Parcel Builder
+     *
+     */
+    protected void construct()
+    {
+        blockLocations.add(new Point3D(0,0,0));
+    }
+
+    /** Rebuilds the parcel to the original state
+     *
+     */
+    public void rebuild()
+    {
+        blockLocations = new ArrayList<Point3D>();
+        this.construct();
+    }
 
     /** Default constructor. Contains a block at (0,0,0) at the location (0,0,0)
      *
@@ -257,7 +278,131 @@ public class Parcel implements Comparable<Parcel>
     
     }
     
+       /** Generates the vertices of a cuboid parcel
+     *
+     * @param Arraylist of Point3D 
+     */
+     
+     private void setVertices(ArrayList<Point3D> blocks)
+     {
+    	
+        int max_x = (int)location.getX()+1;
+         int max_y = (int)location.getY()+1;
+        int max_z = (int)location.getZ()+1;
         
+        // find the vertices of cuboid
+        
+        // first, reset the vertices list
+        vertices = new ArrayList<Point3D>();
+        
+        for(Point3D point : blocks)
+        {
+           if((point.getX()+1) > max_x) max_x = (int)point.getX()+1;
+           if((point.getY()+1) > max_y) max_y = (int)point.getY()+1;
+           if((point.getZ()+1) > max_z) max_z = (int)point.getZ()+1;
+        }
+     
+        for(int i = 0; i<2; i++)
+        	{
+        	for(int j = 0; j<2; i++)
+        		{
+        			for(int k = 0; k<2; i++)
+        			{
+        				int tmp_x = k*max_x;
+        				int tmp_y = j*max_y;
+        				int tmp_z = i*max_z;
+        				vertices.add(new Point3D(tmp_x,tmp_y,tmp_z));
+        			
+        			}
+        		}
+        	}
+        
+     
+     }
+    
+    
+    /** Gets the vertices of a cuboid parcel relevent to a higher container
+     *
+     * @return Arraylist of Point3D of the vertices
+     */
+         
+    public ArrayList<Point3D> getVertices()
+    {
+        setVertices(blockLocations);
+    	ArrayList<Point3D> result = new ArrayList<Point3D>();
+         
+         for(Point3D point : vertices)
+        {
+            result.add(point.add(location));
+        }
+        
+        
+        return result;
+    }
+        
+     /** Gets the sides of a cuboid parcel, relevent to a higher container
+     *
+     * @Param temp 0 for vertices 0-7, 8 for vertices 8-15
+     */
+    private void setSides(int temp)
+    {
+    	// empty sides list
+    	sides = = new ArrayList<Point3D[]>();
+    	
+    Point3D[] s1 = {vertices.get(temp), vertices.get(temp+1), vertices.get(temp+2)};
+    	Point3D[] s2 = {vertices.get(temp), vertices.get(temp+1), vertices.get(temp+4)};
+    	Point3D[] s3 = {vertices.get(temp), vertices.get(temp+2), vertices.get(temp+4)};
+    	Point3D[] s4 = {vertices.get(temp+1), vertices.get(temp+2), vertices.get(temp+3)};
+    	Point3D[] s5 = {vertices.get(temp+1), vertices.get(temp+3), vertices.get(temp+7)};
+    	Point3D[] s6 = {vertices.get(temp+2), vertices.get(temp+3), vertices.get(temp+7)};
+    	Point3D[] s7 = {vertices.get(temp+1), vertices.get(temp+4), vertices.get(temp+5)};
+    	Point3D[] s8 = {vertices.get(temp+1), vertices.get(temp+5), vertices.get(temp+7)};
+    	Point3D[] s9 = {vertices.get(temp+4), vertices.get(temp+5), vertices.get(temp+7)};
+    	Point3D[] s10 = {vertices.get(temp+2), vertices.get(temp+4), vertices.get(temp+6)};
+    	Point3D[] s11 = {vertices.get(temp+4), vertices.get(temp+6), vertices.get(temp+7)};
+    	Point3D[] s12 = {vertices.get(temp+2), vertices.get(temp+6), vertices.get(temp+7)};
+    	
+    	sides.add(s1);
+    	sides.add(s2);
+    	sides.add(s3);
+    	sides.add(s4);
+        sides.add(s5);
+        sides.add(s6);
+        sides.add(s7);
+        sides.add(s8);
+        sides.add(s9);
+        sides.add(s10);
+        sides.add(s11);
+        sides.add(s12);
+    
+    
+    
+    }
+    
+    
+    
+    /** Gets the sides of a cuboid parcel, relevent to a higher container
+     *
+     * @return An arraylist of arrays of Point3D objects
+     */
+         
+    public ArrayList<Point3D[]> getSides()
+    {
+       getVertices();
+        int tmp = vertices.size();  	
+    	List<Point3D[]> result = new ArrayList<Point3D[]>();
+    	if(tmp > 9)
+    		setSides(8);
+    	
+    	setSides(0);
+    	
+        
+        return sides;
+    }
+    
+    
+    
+    
     
 
     /** Test method

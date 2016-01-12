@@ -32,7 +32,8 @@ public class ParcelA extends Parcel
         this.setLocation(location);
     }
 
-    private void construct()
+    @Override
+    protected void construct()
     {
         for(int i = 0; i < 4; i++)
         {

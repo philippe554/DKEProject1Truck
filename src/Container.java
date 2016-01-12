@@ -1,7 +1,4 @@
 import javafx.geometry.Point3D;
-/**
- * Created by asus on 04.01.2016.
- */
 
 public class Container {
 
@@ -55,12 +52,24 @@ public class Container {
     
     public void addParcel(Parcel parcel)
     {
-    for(Point3D point : parcel.getBlockLocations())
+        for(Point3D point : parcel.getBlockLocations())
    	   {
-   	   container[(int)point.getX()][(int)point.getY()][(int)point.getZ()] = parcel.getID();
-   	   	
-   	   	   
+   	    container[(int)point.getX()][(int)point.getY()][(int)point.getZ()] = parcel.getID();
    	   }
-    
+    }
+
+    public void removeParcel(int ID)
+    {
+        for(int i = 0; i < container.length; i++)
+        {
+            for(int j = 0; j < container[0].length; j++)
+            {
+                for(int k = 0; k < container[0][0].length; k++)
+                {
+                    if(container[i][j][k] == ID)
+                        container[i][j][k] = -1;
+                }
+            }
+        }
     }
 }
