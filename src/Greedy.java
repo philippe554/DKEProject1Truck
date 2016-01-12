@@ -19,15 +19,39 @@ public class Greedy {
     private ArrayList<Parcel> loadedParcels = new ArrayList<Parcel>();
 
     public static void main(String[]args){
+        int numberOfA=0;
+        int numberOfB=0;
+        int numberOfC=100;
+        int numberOfL=0;
+        int numberOfP=0;
+        int numberOfT=0;
         ArrayList<Parcel> list = new ArrayList<Parcel>();
-        list.add(new ParcelC());list.add(new ParcelC());list.add(new ParcelC());list.add(new ParcelC());
-        list.add(new ParcelB());list.add(new ParcelB());list.add(new ParcelB());list.add(new ParcelB());
-        list.add(new ParcelA());list.add(new ParcelA());list.add(new ParcelA());list.add(new ParcelA());
-        list.add(new ParcelL());list.add(new ParcelL());list.add(new ParcelL());list.add(new ParcelC());
-        list.add(new ParcelP());list.add(new ParcelP());list.add(new ParcelP());list.add(new ParcelB());
-        list.add(new ParcelT());list.add(new ParcelT());list.add(new ParcelT());list.add(new ParcelA());
+        for(int i=0;i<numberOfA;i++)
+        {
+            list.add(new ParcelA());
+        }
+        for(int i=0;i<numberOfB;i++)
+        {
+            list.add(new ParcelB());
+        }
+        for(int i=0;i<numberOfC;i++)
+        {
+            list.add(new ParcelC());
+        }
+        for(int i=0;i<numberOfL;i++)
+        {
+            list.add(new ParcelL());
+        }
+        for(int i=0;i<numberOfP;i++)
+        {
+            list.add(new ParcelP());
+        }
+        for(int i=0;i<numberOfT;i++)
+        {
+            list.add(new ParcelT());
+        }
 
-        Greedy greedy = new Greedy(new Container(33,5,15),list);
+        Greedy greedy = new Greedy(new Container(33,8,5),list);
     }
     public Greedy(Container tTruck, ArrayList<Parcel> tListOfPackets) {
         int x=400;
@@ -64,13 +88,15 @@ public class Greedy {
         {
             if(placeMinimumCoordinates(listOfPackets.get(i)))
             {
-                loadedParcels.add(listOfPackets.get(i));
+                //loadedParcels.add(listOfPackets.get(i));
             }else
             {
                 rejectedParcels.add(listOfPackets.get(i));
             }
         }
 
+        double values[] = {truck.emptyPercent(),loadedParcels.size()};
+        tetrisBasedFiller.values=values;
         tetrisBasedFiller.addParcels(loadedParcels);
 
         long lastFPSRecordTime=System.currentTimeMillis();
@@ -87,11 +113,6 @@ public class Greedy {
             tetrisBasedFiller.rotate();
             tetrisBasedFiller.renderImage();
             tetrisBasedFiller.repaint();
-            /*try {
-                Thread.sleep(20);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }*/
         }
     }
     public void rotateParcel(int rot, Parcel p) {
@@ -103,18 +124,41 @@ public class Greedy {
         if(rot%3==0) {p.rotateY();}
         if(rot%3 == 2){p.rotateX();}
     }
+    public ArrayList<Parcel> getAllRotations(Parcel p) {
+        ArrayList<Parcel> rotations = new ArrayList<Parcel>();
+        for(int j=0;j<4;j++) {
+            for (int i = 0; i < 4; i++) {
+                rotations.add(new Parcel(p.getBlockLocations()));
+                p.rotateZ();
+            }
+            p.rotateX();
+        }
+        p.rotateY();
+        for (int i = 0; i < 4; i++) {
+            rotations.add(new Parcel(p.getBlockLocations()));
+            p.rotateZ();
+        }
+        p.rotateY();
+        p.rotateY();
+        for (int i = 0; i < 4; i++) {
+            rotations.add(new Parcel(p.getBlockLocations()));
+            p.rotateZ();
+        }
+        p.rotateY();
+        //TODO: check if there are copies
+        return rotations;
+    }
     public boolean placeMinimumCoordinates(Parcel p ) {
         int minX=9999;
         int minY=9999;
         int minZ=9999;
         int bestRotation=0;
-        for(int r=0;r<p.getRotations();r++) {
-            Parcel tParcel = new Parcel(p.getBlockLocations());
-            rotateParcel(r, tParcel);
+        ArrayList<Parcel> rotations = getAllRotations(p);
+        for(int r=0;r<rotations.size();r++) {
             for (int i = 0; i < truck.getWidth(); i++) {
                 for (int j = 0; j < truck.getLength(); j++) {
                     for (int k = 0; k < truck.getHeight(); k++) {
-                        if (possibleToPlace(tParcel, i, j, k)) {
+                        if (possibleToPlace(rotations.get(r), i, j, k)) {
                             if ((i + j + k) < (minX + minY + minZ)) {
                                 minX = i;
                                 minY = j;
@@ -131,9 +175,10 @@ public class Greedy {
             return false;
         }
         else {
-            rotateParcel(bestRotation, p);
+            p=rotations.get(bestRotation);
             p.translate(minX,minY,minZ);
             truck.addParcel(p);
+            loadedParcels.add(p);
             return true;
         }
     }
