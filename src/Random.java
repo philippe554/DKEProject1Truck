@@ -19,20 +19,31 @@ public class Random {
     private ArrayList<Parcel> loadedParcels = new ArrayList<Parcel>();
     public static void main(String[]args){
         ArrayList<Parcel> list = new ArrayList<Parcel>();
-        for(int i = 0; i < 500000; i++){
-            int randomParcelID = (1 + (int)(Math.random()*3));
-
-            if(randomParcelID == 1){
-                list.add(new ParcelA());
-            }
-            else if(randomParcelID == 2){
-                list.add(new ParcelB());
-            }
-            else if(randomParcelID == 3){
-                list.add(new ParcelC());
-            }
-
+        int numberOfA = 0;
+        int numberOfB = 0;
+        int numberOfC = 0;
+        int numberOfL = 500;
+        int numberOfP = 500;
+        int numberOfT = 500;
+        for(int i = 0; i < numberOfA; i++){
+            list.add(new ParcelA());
         }
+        for(int i = 0; i < numberOfB; i++){
+            list.add(new ParcelB());
+        }
+        for(int i = 0; i < numberOfC; i++){
+            list.add(new ParcelC());
+        }
+        for(int i = 0; i < numberOfL; i++){
+            list.add(new ParcelL());
+        }
+        for(int i = 0; i < numberOfP; i++){
+            list.add(new ParcelP());
+        }
+        for(int i = 0; i < numberOfT; i++){
+            list.add(new ParcelT());
+        }
+
         Container tTruck = new Container(33,8,5);
         Random random = new Random(tTruck,list);
 
@@ -68,7 +79,7 @@ public class Random {
         truck = tTruck;
         listOfPackets = tListOfPackets;
         //Sorting the list from largest value to smallest
-        Collections.sort(listOfPackets);
+        Collections.shuffle(listOfPackets);
 
         for(int i=0;i<listOfPackets.size();i++)
         {
@@ -117,38 +128,45 @@ public class Random {
         int minX=9999;
         int minY=9999;
         int minZ=9999;
-        int randomRotation = 0;
-                for(int r=0;r<p.getRotations();r++) {
-            Parcel tParcel = new Parcel(p.getBlockLocations());
-                    randomRotation = (int)(Math.random()*11);
-            rotateParcel(randomRotation, tParcel);
-            int i = (int)(Math.random() * truck.getWidth());
-            int j = (int)(Math.random() * truck.getLength());
-                    for (int k = 0; k < truck.getHeight(); k++) {
+        int randomRotation = (int)(Math.random()*12);
+        int tries= 0;
 
-                        if (possibleToPlace(tParcel, i, j, k) == true) {
-                            if ((i + j + k) < (minX + minY + minZ)) {
-                                minX = i;
-                                minY = j;
-                                minZ = k;
-                                                            }
+
+        while(tries < 100) {
+            int i = (int) (Math.random() * truck.getWidth());
+            int j = (int) (Math.random() * truck.getLength());
+                for (int r = 0; r < p.getRotations(); r++) {
+                Parcel tParcel = new Parcel(p.getBlockLocations());
+                randomRotation +=r;
+                rotateParcel(randomRotation, tParcel);
+
+                for (int k = 0; k < truck.getHeight(); k++) {
+
+                    if (possibleToPlace(tParcel, i, j, k) == true) {
+                        if ((i + j + k) < (minX + minY + minZ)) {
+                            minX = i;
+                            minY = j;
+                            minZ = k;
                         }
+                    }
+                    else{
+                        tries++;
+                    }
 
 
-
+                }
             }
         }
-        if(minX==9999&&minY==9999&&minZ==9999)
-        {
-            return false;
-        }
-        else {
-            rotateParcel(randomRotation, p);
-            p.translate(minX,minY,minZ);
-            truck.addParcel(p);
-            System.out.println(truck.emptyPercent() + "%");
-            return true;
-        }
+            if (minX == 9999 && minY == 9999 && minZ == 9999) {
+                return false;
+            } else {
+                rotateParcel(randomRotation, p);
+                p.translate(minX, minY, minZ);
+                truck.addParcel(p);
+                System.out.println(truck.emptyPercent() + "%");
+                return true;
+            }
+
     }
     public boolean possibleToPlace(Parcel p,int x,int y,int z){
         boolean possible=true;
