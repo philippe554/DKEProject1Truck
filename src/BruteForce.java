@@ -90,7 +90,7 @@ public class BruteForce
                 Container newBox = box.clone();
                 ArrayList<Parcel> newPieces = new ArrayList<Parcel>();
                 for(int i = 1; i < pieces.size(); i++)
-                    if(!(pieces.get(i).getValue() != activeParcel.getValue()))
+                    if(pieces.get(i).getValue() != activeParcel.getValue())
                         newPieces.add(pieces.get(i));
                 parcelSolver(newBox,newPieces);
             }
