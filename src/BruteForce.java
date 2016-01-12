@@ -90,7 +90,8 @@ public class BruteForce
                 Container newBox = box.clone();
                 ArrayList<Parcel> newPieces = new ArrayList<Parcel>();
                 for(int i = 1; i < pieces.size(); i++)
-                    newPieces.add(pieces.get(i));
+                    if(!(pieces.get(i).getValue() != activeParcel.getValue()))
+                        newPieces.add(pieces.get(i));
                 parcelSolver(newBox,newPieces);
             }
             //If we can't we quit the execution of the current branch i.e. prune it
@@ -113,7 +114,7 @@ public class BruteForce
                 boolean freeSpot = true;
                 if(point.getX() < box.getWidth() && point.getY() < box.getHeight() && point.getZ() < box.getLength() &&
                         point.getX() >= 0 && point.getY() >= 0 && point.getZ() >= 0)
-                    freeSpot = (box.getContainer()[(int)point.getX()][(int)point.getY()][(int)point.getZ()] == -1);
+                            freeSpot = (box.getContainer()[(int)point.getX()][(int)point.getY()][(int)point.getZ()] == -1);
                 if(!(point.getY() < box.getHeight() && freeSpot))
                     inTheBox = false;
             }
@@ -186,7 +187,7 @@ public class BruteForce
        Container container = new Container(5,8,33);
        ArrayList<Parcel> packets = new ArrayList<Parcel>();
        for(int i = 0; i < 264; i++)
-           packets.add(new ParcelL());
+           packets.add(new ParcelA());
        BruteForce solver = new BruteForce(container, packets);
        solver.parcelSolver(solver.truck,solver.listOfPackets);
 
