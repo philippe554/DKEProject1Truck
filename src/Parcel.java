@@ -306,7 +306,7 @@ public class Parcel implements Comparable<Parcel>
      * @param blocks of Point3D
      */
 
-     private void setVertices(ArrayList<Point3D> blocks)
+     protected void setVertices(ArrayList<Point3D> blocks)
      {
 
         int max_x = (int)location.getX()+1;

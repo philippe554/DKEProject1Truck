@@ -1,5 +1,7 @@
 import javafx.geometry.Point3D;
 
+import java.util.ArrayList;
+
 public class ParcelT extends Parcel
 {
 
@@ -28,7 +30,7 @@ public class ParcelT extends Parcel
         setRotations(12);
     }
 
-    private void construct()
+    protected void construct()
     {
         this.add(new Point3D(1,0,1));
         this.add(new Point3D(2,0,1));
@@ -43,20 +45,20 @@ public class ParcelT extends Parcel
     	ArrayList<Point3D> part2 = new ArrayList<Point3D>();
     	ArrayList<Point3D> result = new ArrayList<Point3D>();
     	
-    	part1.add(blockLocations.get(0));
-    	part1.add(blockLocations.get(1));
+    	part1.add(this.getBlockLocations().get(0));
+    	part1.add(this.getBlockLocations().get(1));
     	
-    	part2.add(blockLocations.get(2));
-    	part2.add(blockLocations.get(3));
-    	part2.add(blockLocations.get(4));
+    	part2.add(this.getBlockLocations().get(2));
+    	part2.add(this.getBlockLocations().get(3));
+    	part2.add(this.getBlockLocations().get(4));
     	
     	setVertices(part1);
     	setVertices(part2);
     	
          
-         for(Point3D point : vertices)
+         for(Point3D point : this.getVertices())
         {
-            result.add(point.add(location));
+            result.add(point.add(this.getLocation()));
         }
         
         
