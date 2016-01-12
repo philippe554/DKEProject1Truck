@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 public class Parcel implements Comparable<Parcel>
 {
-    //maximum number of times a piece can be rotated
+	//maximum number of times a piece can be rotated
     private int rotations = 1;
     //Locations of the parcel's blocks with respect to the (0,0,0) block
     private ArrayList<Point3D> blockLocations = new ArrayList<Point3D>();
@@ -268,15 +268,15 @@ public class Parcel implements Comparable<Parcel>
         }
         return text;
     }
-
+        
     /** Gets the number of rotations a piece is capable of
      *
      * @return int of possible rotations
      */
     public int getRotations()
     {
-        return rotations;
-
+    return rotations;
+    
     }
     /** Parcel Builder
      *
@@ -301,16 +301,16 @@ public class Parcel implements Comparable<Parcel>
      */
     public void setRotations(int rotations) {this.rotations = rotations;}
 
-    /** Generates the vertices of a cuboid parcel
+       /** Generates the vertices of a cuboid parcel
      *
      * @param blocks of Point3D
      */
 
-    private void setVertices(ArrayList<Point3D> blocks)
-    {
+     protected void setVertices(ArrayList<Point3D> blocks)
+     {
 
         int max_x = (int)location.getX()+1;
-        int max_y = (int)location.getY()+1;
+         int max_y = (int)location.getY()+1;
         int max_z = (int)location.getZ()+1;
 
         // find the vertices of cuboid
@@ -320,28 +320,28 @@ public class Parcel implements Comparable<Parcel>
 
         for(Point3D point : blocks)
         {
-            if((point.getX()+1) > max_x) max_x = (int)point.getX()+1;
-            if((point.getY()+1) > max_y) max_y = (int)point.getY()+1;
-            if((point.getZ()+1) > max_z) max_z = (int)point.getZ()+1;
+           if((point.getX()+1) > max_x) max_x = (int)point.getX()+1;
+           if((point.getY()+1) > max_y) max_y = (int)point.getY()+1;
+           if((point.getZ()+1) > max_z) max_z = (int)point.getZ()+1;
         }
 
         for(int i = 0; i<2; i++)
-        {
-            for(int j = 0; j<2; j++)
-            {
-                for(int k = 0; k<2; k++)
-                {
-                    int tmp_x = k*max_x;
-                    int tmp_y = j*max_y;
-                    int tmp_z = i*max_z;
-                    vertices.add(new Point3D(tmp_x,tmp_y,tmp_z));
+        	{
+        	for(int j = 0; j<2; j++)
+        		{
+        			for(int k = 0; k<2; k++)
+        			{
+        				int tmp_x = k*max_x;
+        				int tmp_y = j*max_y;
+        				int tmp_z = i*max_z;
+        				vertices.add(new Point3D(tmp_x,tmp_y,tmp_z));
 
-                }
-            }
-        }
+        			}
+        		}
+        	}
 
 
-    }
+     }
 
 
     /** Gets the vertices of a cuboid parcel relevent to a higher container
@@ -352,9 +352,9 @@ public class Parcel implements Comparable<Parcel>
     public ArrayList<Point3D> getVertices()
     {
         setVertices(blockLocations);
-        ArrayList<Point3D> result = new ArrayList<Point3D>();
+    	ArrayList<Point3D> result = new ArrayList<Point3D>();
 
-        for(Point3D point : vertices)
+         for(Point3D point : vertices)
         {
             result.add(point.add(location));
         }
@@ -363,31 +363,31 @@ public class Parcel implements Comparable<Parcel>
         return result;
     }
 
-    /** Gets the sides of a cuboid parcel, relevent to a higher container
+     /** Gets the sides of a cuboid parcel, relevent to a higher container
      *
      * @param temp 0 for vertices 0-7, 8 for vertices 8-15
      */
     private void setSides(int temp)
     {
-        // empty sides list
+    	// empty sides list
 
-        Point3D[] s1 = {vertices.get(temp), vertices.get(temp+1), vertices.get(temp+2)};
-        Point3D[] s2 = {vertices.get(temp), vertices.get(temp+1), vertices.get(temp+4)};
-        Point3D[] s3 = {vertices.get(temp), vertices.get(temp+2), vertices.get(temp+4)};
-        Point3D[] s4 = {vertices.get(temp+1), vertices.get(temp+2), vertices.get(temp+3)};
-        Point3D[] s5 = {vertices.get(temp+1), vertices.get(temp+3), vertices.get(temp+7)};
-        Point3D[] s6 = {vertices.get(temp+2), vertices.get(temp+3), vertices.get(temp+7)};
-        Point3D[] s7 = {vertices.get(temp+1), vertices.get(temp+4), vertices.get(temp+5)};
-        Point3D[] s8 = {vertices.get(temp+1), vertices.get(temp+5), vertices.get(temp+7)};
-        Point3D[] s9 = {vertices.get(temp+4), vertices.get(temp+5), vertices.get(temp+7)};
-        Point3D[] s10 = {vertices.get(temp+2), vertices.get(temp+4), vertices.get(temp+6)};
-        Point3D[] s11 = {vertices.get(temp+4), vertices.get(temp+6), vertices.get(temp+7)};
-        Point3D[] s12 = {vertices.get(temp+2), vertices.get(temp+6), vertices.get(temp+7)};
+    Point3D[] s1 = {vertices.get(temp), vertices.get(temp+1), vertices.get(temp+2)};
+    	Point3D[] s2 = {vertices.get(temp), vertices.get(temp+1), vertices.get(temp+4)};
+    	Point3D[] s3 = {vertices.get(temp), vertices.get(temp+2), vertices.get(temp+4)};
+    	Point3D[] s4 = {vertices.get(temp+1), vertices.get(temp+2), vertices.get(temp+3)};
+    	Point3D[] s5 = {vertices.get(temp+1), vertices.get(temp+3), vertices.get(temp+7)};
+    	Point3D[] s6 = {vertices.get(temp+2), vertices.get(temp+3), vertices.get(temp+7)};
+    	Point3D[] s7 = {vertices.get(temp+1), vertices.get(temp+4), vertices.get(temp+5)};
+    	Point3D[] s8 = {vertices.get(temp+1), vertices.get(temp+5), vertices.get(temp+7)};
+    	Point3D[] s9 = {vertices.get(temp+4), vertices.get(temp+5), vertices.get(temp+7)};
+    	Point3D[] s10 = {vertices.get(temp+2), vertices.get(temp+4), vertices.get(temp+6)};
+    	Point3D[] s11 = {vertices.get(temp+4), vertices.get(temp+6), vertices.get(temp+7)};
+    	Point3D[] s12 = {vertices.get(temp+2), vertices.get(temp+6), vertices.get(temp+7)};
 
-        sides.add(s1);
-        sides.add(s2);
-        sides.add(s3);
-        sides.add(s4);
+    	sides.add(s1);
+    	sides.add(s2);
+    	sides.add(s3);
+    	sides.add(s4);
         sides.add(s5);
         sides.add(s6);
         sides.add(s7);
