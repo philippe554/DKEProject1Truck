@@ -83,6 +83,27 @@ public class Container {
         containedParcels.remove(parcel);
     }
 
+    /* Check how much of the truck is empty (in %)
+
+
+     */
+    public int emptyPercent(){
+        int emptyCounter = 0;
+        int totalCounter = 0;
+        for (int i = 0; i < container.length; i++) {
+            for (int j = 0; j < container[i].length; j++) {
+                for (int k = 0; k < container[i][j].length; k++) {
+                    totalCounter++;
+                    if (container[i][j][k] == -1) {
+                        emptyCounter++;
+                    }
+                }
+            }
+        }
+
+        return ((emptyCounter * 100)/totalCounter);
+    }
+
     /** Clones the current container
      *
      * @return A deep clone of current container
