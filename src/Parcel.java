@@ -8,11 +8,11 @@ public class Parcel implements Comparable<Parcel>
     //Locations of the parcel's blocks with respect to the (0,0,0) block
     private ArrayList<Point3D> blockLocations = new ArrayList<Point3D>();
     //Locations of the vertices of the parcel
-    private ArrayList<Point3D> vertices = new ArrayList<Point3D>();
+    protected ArrayList<Point3D> vertices = new ArrayList<Point3D>();
     //Locations of the sides of the parcel
     private ArrayList<Point3D[]> sides = new ArrayList<Point3D[]>();
     //Location of the (0,0,0) block with respect to upper container
-    private Point3D location = new Point3D(0,0,0);
+    protected Point3D location = new Point3D(0,0,0);
     //ID to recognise each parcel
     private int ID;
     static int numberOfParcels = 0;
@@ -309,20 +309,22 @@ public class Parcel implements Comparable<Parcel>
      protected void setVertices(ArrayList<Point3D> blocks)
      {
 
-        int max_x = (int)location.getX()+1;
-         int max_y = (int)location.getY()+1;
-        int max_z = (int)location.getZ()+1;
-
-        // find the vertices of cuboid
-
-        // first, reset the vertices list
-        vertices = new ArrayList<Point3D>();
+        int max_x = 1;
+        int max_y = 1;
+        int max_z = 1;
+         int min_x = 999;
+         int min_y = 999;
+         int min_z = 999;
 
         for(Point3D point : blocks)
         {
            if((point.getX()+1) > max_x) max_x = (int)point.getX()+1;
            if((point.getY()+1) > max_y) max_y = (int)point.getY()+1;
            if((point.getZ()+1) > max_z) max_z = (int)point.getZ()+1;
+
+            if((point.getX()) < min_x) min_x = (int)point.getX();
+            if((point.getY()) < min_y) min_y = (int)point.getY();
+            if((point.getZ()) < min_z) min_z = (int)point.getZ();
         }
 
         for(int i = 0; i<2; i++)
@@ -331,9 +333,24 @@ public class Parcel implements Comparable<Parcel>
         		{
         			for(int k = 0; k<2; k++)
         			{
-        				int tmp_x = k*max_x;
-        				int tmp_y = j*max_y;
-        				int tmp_z = i*max_z;
+                        int tmp_x;
+                        if(k==0){
+                            tmp_x=min_x;
+                        }else{
+                           tmp_x = max_x;
+                        }
+                        int tmp_y;
+                        if(j==0){
+                            tmp_y=min_y;
+                        }else{
+                            tmp_y = max_y;
+                        }
+                        int tmp_z;
+                        if(i==0){
+                            tmp_z=min_z;
+                        }else{
+                            tmp_z = max_z;
+                        }
         				vertices.add(new Point3D(tmp_x,tmp_y,tmp_z));
 
         			}
@@ -351,12 +368,18 @@ public class Parcel implements Comparable<Parcel>
 
     public ArrayList<Point3D> getVertices()
     {
+        vertices.clear();
         setVertices(blockLocations);
     	ArrayList<Point3D> result = new ArrayList<Point3D>();
 
          for(Point3D point : vertices)
         {
             result.add(point.add(location));
+        }
+        vertices.clear();
+        for(Point3D point:result)
+        {
+               vertices.add(point);
         }
 
 
