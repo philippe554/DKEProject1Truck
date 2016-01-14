@@ -1,15 +1,11 @@
-import javafx.geometry.Point3D;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
- * Created by pmmde on 1/13/2016.
+ * Created by pmmde on 1/14/2016.
  */
-public class HillClimb extends FillEngine{
-
+public class Genetic extends FillEngine {
     public static void main(String[]args){
         int numberOfA= (int) (Math.random()*200);
         int numberOfB= (int) (Math.random()*200);
@@ -44,9 +40,9 @@ public class HillClimb extends FillEngine{
             list.add(new ParcelT());
         }
 
-        HillClimb hillClimb = new HillClimb(list);
+        Genetic genetic=new Genetic(list);
     }
-    public HillClimb(ArrayList<Parcel> listOfPackets) {
+    public Genetic(ArrayList<Parcel> listOfPackets) {
         int x=400;
         int y=400;
         //make new frame
@@ -100,30 +96,26 @@ public class HillClimb extends FillEngine{
     }
     @Override
     public Setting[] mutate(Setting s) {
-        double step=3;
-        Setting[] sReturn = new Setting[s.c.length*2+5];
-        for(int i=0;i<s.c.length;i++)
+        double mutationRate=0.1;
+        Setting[] sReturn = new Setting[21];
+        for(int i=0;i<20;i++)
         {
-            sReturn[i*2] = new Setting();
-            sReturn[i*2+1] = new Setting();
+            sReturn[i]=new Setting();
             for(int j=0;j<s.c.length;j++)
             {
-                if(i==j){
-                    sReturn[i*2].c[j]=s.c[j]+step;
-                    sReturn[i*2+1].c[j]=s.c[j]-step;
-                }else{
-                    sReturn[i*2].c[j]=s.c[j];
-                    sReturn[i*2+1].c[j]=s.c[j];
+                if(Math.random()<mutationRate)
+                {
+                    sReturn[i].c[j]=Math.random()*10*2-10;
+                }else
+                {
+                    sReturn[i].c[j]=s.c[j];
                 }
             }
         }
-        sReturn[sReturn.length-5]=createRandomSetting(10);
-        sReturn[sReturn.length-4]=createRandomSetting(10);
-        sReturn[sReturn.length-3]=createRandomSetting(10);
-        sReturn[sReturn.length-2]=createRandomSetting(10);
-        sReturn[sReturn.length-1]= new Setting();
-        for(int j=0;j<s.c.length;j++) {
-            sReturn[sReturn.length - 1].c[j]=s.c[j];
+        sReturn[20]=new Setting();
+        for(int j=0;j<s.c.length;j++)
+        {
+            sReturn[20].c[j]=s.c[j];
         }
         return sReturn;
     }

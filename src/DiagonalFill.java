@@ -1,19 +1,15 @@
-import javafx.geometry.Point3D;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
- * Created by pmmde on 1/13/2016.
+ * Created by pmmde on 1/14/2016.
  */
-public class HillClimb extends FillEngine{
-
+public class DiagonalFill extends FillEngine{
     public static void main(String[]args){
-        int numberOfA= (int) (Math.random()*200);
-        int numberOfB= (int) (Math.random()*200);
-        int numberOfC=(int) (Math.random()*200);
+        int numberOfA= (int) (Math.random()*100);
+        int numberOfB= (int) (Math.random()*100);
+        int numberOfC=(int) (Math.random()*100);
         int numberOfL=(int) (Math.random()*0);
         int numberOfP=(int) (Math.random()*0);
         int numberOfT=(int) (Math.random()*0);
@@ -44,9 +40,9 @@ public class HillClimb extends FillEngine{
             list.add(new ParcelT());
         }
 
-        HillClimb hillClimb = new HillClimb(list);
+        DiagonalFill diagonalFill= new DiagonalFill(list);
     }
-    public HillClimb(ArrayList<Parcel> listOfPackets) {
+    public DiagonalFill(ArrayList<Parcel> listOfPackets) {
         int x=400;
         int y=400;
         //make new frame
@@ -75,55 +71,33 @@ public class HillClimb extends FillEngine{
         int frames=0;
 
         Setting s=createRandomSetting(10);
-        int generation=0;
-
+        ArrayList<Parcel> loadedParcels = new ArrayList<Parcel>();
+        Result result=run(listOfPackets,loadedParcels,s);
+        tetrisBasedFiller.addParcels(loadedParcels);
+        tetrisBasedFiller.values= new double[]{result.score,result.proccentFilled};
         while(true) {
             frames++;
-            generation++;
-            if(lastFPSRecordTime+1000<System.currentTimeMillis())
-            {
-                tetrisBasedFiller.fps=frames;
-                frames=0;
-                lastFPSRecordTime+=1000;
+            if(lastFPSRecordTime+1000<System.currentTimeMillis()) {
+                tetrisBasedFiller.fps = frames;
+                frames = 0;
+                lastFPSRecordTime += 1000;
             }
-            ArrayList<Parcel> loadedParcels = new ArrayList<Parcel>();
-
-            Result result=run(listOfPackets,loadedParcels,s);
-
-            tetrisBasedFiller.emptyParcels();
-            tetrisBasedFiller.addParcels(loadedParcels);
-            tetrisBasedFiller.values= new double[]{result.score,result.proccentFilled,generation,99999.0,s.c[0],s.c[1],s.c[2],s.c[3],s.c[4],s.c[5]};
-            //tetrisBasedFiller.rotate();
+            tetrisBasedFiller.rotate();
             tetrisBasedFiller.renderImage();
             tetrisBasedFiller.repaint();
         }
     }
     @Override
     public Setting[] mutate(Setting s) {
-        double step=3;
-        Setting[] sReturn = new Setting[s.c.length*2+5];
-        for(int i=0;i<s.c.length;i++)
+        Setting[] sReturn = new Setting[1];
+        sReturn[0]=new Setting();
+        for(int j=0;j<3;j++)
         {
-            sReturn[i*2] = new Setting();
-            sReturn[i*2+1] = new Setting();
-            for(int j=0;j<s.c.length;j++)
-            {
-                if(i==j){
-                    sReturn[i*2].c[j]=s.c[j]+step;
-                    sReturn[i*2+1].c[j]=s.c[j]-step;
-                }else{
-                    sReturn[i*2].c[j]=s.c[j];
-                    sReturn[i*2+1].c[j]=s.c[j];
-                }
-            }
+            sReturn[0].c[j]=0;
         }
-        sReturn[sReturn.length-5]=createRandomSetting(10);
-        sReturn[sReturn.length-4]=createRandomSetting(10);
-        sReturn[sReturn.length-3]=createRandomSetting(10);
-        sReturn[sReturn.length-2]=createRandomSetting(10);
-        sReturn[sReturn.length-1]= new Setting();
-        for(int j=0;j<s.c.length;j++) {
-            sReturn[sReturn.length - 1].c[j]=s.c[j];
+        for(int j=3;j<6;j++)
+        {
+            sReturn[0].c[j]=-1;
         }
         return sReturn;
     }

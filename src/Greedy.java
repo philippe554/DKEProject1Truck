@@ -10,6 +10,7 @@ import java.util.LinkedList;
  * Created by pmmde on 1/11/2016.
  */
 public class Greedy {
+    //OLD CODE!!!!!
     protected Container truck;
     //List of parcels that are fitted to the truck
     protected ArrayList<Parcel> listOfPackets;
@@ -19,9 +20,9 @@ public class Greedy {
     protected ArrayList<Parcel> loadedParcels = new ArrayList<Parcel>();
 
     public static void main(String[]args){
-        int numberOfA=100;
-        int numberOfB=100;
-        int numberOfC=100;
+        int numberOfA=1;
+        int numberOfB=1;
+        int numberOfC=1;
         int numberOfL=0;
         int numberOfP=0;
         int numberOfT=0;
