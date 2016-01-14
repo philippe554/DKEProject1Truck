@@ -1,16 +1,16 @@
 import javafx.geometry.Point3D;
-
 import java.util.ArrayList;
 
 public class ParcelT extends Parcel
 {
+
+    public static final int rotations = 12;
 
     public ParcelT()
     {
         super();
         construct();
         setValue(5);
-        setRotations(12);
     }
 
     public ParcelT(double value)
@@ -18,7 +18,6 @@ public class ParcelT extends Parcel
         super();
         construct();
         setValue(value);
-        setRotations(12);
     }
 
     public ParcelT(double value, Point3D location)
@@ -27,7 +26,6 @@ public class ParcelT extends Parcel
         construct();
         setValue(value);
         this.setLocation(location);
-        setRotations(12);
     }
 
     protected void construct()
@@ -40,9 +38,10 @@ public class ParcelT extends Parcel
     }
     
     @Override
-     private void setVertices(ArrayList<Point3D> blocks)
+     protected void setVertices(ArrayList<Point3D> blocks)
      {
     	int tmp_x, tmp_y, tmp_z;
+    	
     	// end face of "top" of T
     	tmp_x = (int)blocks.get(0).getX();
     	tmp_y = (int)blocks.get(0).getY();
@@ -115,10 +114,22 @@ public class ParcelT extends Parcel
     
     
     @Override
-     private void setSides(int nothing)
+    public ArrayList<Point3D[]> getSides()
+    {
+        this.getVertices();
+        
+        sides = new ArrayList<Point3D[]>();
+
+     
+        this.setSides();
+
+        return sides;
+    }
+    
+     protected void setSides()
     {
     	// empty sides list
-    	sides = = new ArrayList<Point3D[]>();
+    	sides = new ArrayList<Point3D[]>();
     	
     	Point3D[] s1 = {vertices.get(0), vertices.get(1), vertices.get(2)};
     	Point3D[] s2 = {vertices.get(0), vertices.get(2), vertices.get(3)};
