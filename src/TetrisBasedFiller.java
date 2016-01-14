@@ -183,29 +183,29 @@ class TetrisBasedFiller extends JPanel {
 
         sun = new Point3D(20,50,0);
 
-        camera = new Point3D(0,20,-20);
+        camera = new Point3D(30,30,30);
 
-        camDirection = new Point3D(0,-8,8);
-        camHVector = new Point3D(0.3,0,0);
+        camDirection = new Point3D(-8,-8,-8);
+        camHVector = new Point3D(-0.2,0,0.2);
         camVVector = new Point3D(0,-0.3,0);
 
         img = new BufferedImage((int)(hViewAngle*viewDesity), (int)(vViewAngle*viewDesity), BufferedImage.TYPE_INT_RGB);
 
         vertices = new ArrayList<Point3D>();
-        vertices.add(new Point3D(  -100,  -3,  -100 ));
+        /*vertices.add(new Point3D(  -100,  -3,  -100 ));
         vertices.add(new Point3D(  -100,  -3,  100 ));
         vertices.add(new Point3D(  100,  -3,  100 ));
-        vertices.add(new Point3D(  100,  -3,  -100 ));
+        vertices.add(new Point3D(  100,  -3,  -100 ));*/
 
         side = new ArrayList<Side>();
-        side.add(new Side(0,1,2));
+        /*side.add(new Side(0,1,2));
         side.add(new Side(0,3,2));
         side.get(0).colorR=0;
         side.get(1).colorR=0;
         side.get(0).colorG=150;
         side.get(1).colorG=150;
         side.get(0).colorB=0;
-        side.get(1).colorB=0;
+        side.get(1).colorB=0;*/
 
         /*LinkedList<Parcel> parcels = new LinkedList<Parcel>();
         parcels.add(new ParcelA(3,new Point3D(0,5,0)));
@@ -304,6 +304,23 @@ class TetrisBasedFiller extends JPanel {
     }
 
     public void addParcels(ArrayList<Parcel> parcels) {
+        for(int i=0;i<parcels.size();i++) {
+            int colorR = (int) (Math.random() * 150);
+            int colorG = (int) (Math.random() * 150);
+            int colorB = (int) (Math.random() * 150);
+            ArrayList<Point3D[]> newSides=parcels.get(i).getSides();
+            for(int j=0;j<newSides.size();j++)
+            {
+                for(int k=0;k<newSides.get(j).length;k++)
+                {
+                    vertices.add(newSides.get(j)[k]);
+                }
+                side.add(new Side(vertices.size()-3,vertices.size()-2,vertices.size()-1));//front
+                side.get(side.size()-1).colorR=colorR;
+                side.get(side.size()-1).colorG=colorG;
+                side.get(side.size()-1).colorB=colorB;
+            }
+        }/*
         for(int i=0;i<parcels.size();i++)
         {
             int colorR= (int) (Math.random()*150);
@@ -369,7 +386,11 @@ class TetrisBasedFiller extends JPanel {
                 side.get(side.size()-1).colorG=colorG;
                 side.get(side.size()-1).colorB=colorB;
             }
-        }
+        }*/
+    }
+    public void emptyParcels() {
+        vertices.clear();
+        side.clear();
     }
     protected void paintComponent(Graphics g) {
         Graphics2D localGraphics2D = (Graphics2D)g;
@@ -408,7 +429,7 @@ class TetrisBasedFiller extends JPanel {
         }
     }
     public void rotate(){
-        double angle =20/180.0*Math.PI;
+        double angle =1/180.0*Math.PI;
 
         double[][] m=new double[3][3];
         m[0][0]=Math.cos(angle);m[0][1]=0;m[0][2]=Math.sin(angle);

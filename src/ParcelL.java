@@ -39,7 +39,7 @@ public class ParcelL extends Parcel
         this.add(new Point3D(0,0,1));
     }
     
-    
+    @Override
     public ArrayList<Point3D> getVertices()
     {
         ArrayList<Point3D> part1 = new ArrayList<Point3D>();
@@ -52,16 +52,19 @@ public class ParcelL extends Parcel
     	part1.add(this.getBlockLocations().get(3));
     	
     	part2.add(this.getBlockLocations().get(4));
-    	
+
+        vertices.clear();
     	setVertices(part1);
     	setVertices(part2);
-    	
-         
-         for(Point3D point : this.getVertices())
+        for(Point3D point:vertices)
         {
-            result.add(point.add(this.getLocation()));
+            result.add(point);
         }
-        
+        vertices.clear();
+        for(Point3D point:result)
+        {
+            vertices.add(point.add(location));
+        }
         
         return result;
     }
