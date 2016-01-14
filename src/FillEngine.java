@@ -127,9 +127,9 @@ public abstract class FillEngine {
             if(s.amountParcels[l]>0) {
                 ArrayList<Parcel> rotations = getAllRotations(parcelPrototype[l]);
                 for (int r = 0; r < rotations.size(); r++) {
-                    for (int i = 0; i < container.getWidth(); i++) {
-                        for (int j = 0; j < container.getLength(); j++) {
-                            for (int k = 0; k < container.getHeight(); k++) {
+                    for (int i = 0; i < container.getX(); i++) {
+                        for (int j = 0; j < container.getY(); j++) {
+                            for (int k = 0; k < container.getZ(); k++) {
                                 if (possibleToPlace(container,rotations.get(r), i, j, k)) {
                                     double score = rotations.get(r).getValue()*s.c[0];
                                     score += rotations.get(r).getVolumetricValue()*s.c[1];

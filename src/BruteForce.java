@@ -46,9 +46,9 @@ public class BruteForce
             Parcel activeParcel = pieces.get(0);
             //Check if the piece can be used
             //For all locations
-            for(int x = 0; x < box.getWidth(); x++)
+            for(int x = 0; x < box.getX(); x++)
             {
-                for(int z = 0; z < box.getLength(); z++)
+                for(int z = 0; z < box.getZ(); z++)
                 {
                     //Set the location to match coordinates, and above the box
                     activeParcel.setLocation(new Point3D(x,-5,z));
@@ -112,10 +112,10 @@ public class BruteForce
             for(Point3D point : p.getBlockLocations())
             {
                 boolean freeSpot = true;
-                if(point.getX() < box.getWidth() && point.getY() < box.getHeight() && point.getZ() < box.getLength() &&
+                if(point.getX() < box.getX() && point.getY() < box.getY() && point.getZ() < box.getZ() &&
                         point.getX() >= 0 && point.getY() >= 0 && point.getZ() >= 0)
                             freeSpot = (box.getContainer()[(int)point.getX()][(int)point.getY()][(int)point.getZ()] == -1);
-                if(!(point.getY() < box.getHeight() && freeSpot))
+                if(!(point.getY() < box.getY() && freeSpot))
                     inTheBox = false;
             }
         }
@@ -137,7 +137,7 @@ public class BruteForce
             //Check that the block is not outside of the container
             if(point.getX() < 0 || point.getY() < 0 || point.getZ() < 0)
                 return false;
-            else if(point.getX() >= truck.getWidth() || point.getY() >= truck.getHeight() || point.getZ() >= truck.getLength())
+            else if(point.getX() >= truck.getX() || point.getY() >= truck.getZ() || point.getZ() >= truck.getY())
                 return false;
             //Check that space occupied by the block is free
             else if(truck.getContainer()[(int)point.getX()][(int)point.getY()][(int)point.getZ()] != -1)

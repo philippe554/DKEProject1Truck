@@ -133,14 +133,14 @@ public class Random {
 
 
         while(tries < 100) {
-            int i = (int) (Math.random() * truck.getWidth());
-            int j = (int) (Math.random() * truck.getLength());
+            int i = (int) (Math.random() * truck.getX());
+            int j = (int) (Math.random() * truck.getY());
                 for (int r = 0; r < p.getRotations(); r++) {
                 Parcel tParcel = new Parcel(p.getBlockLocations());
                 randomRotation +=r;
                 rotateParcel(randomRotation, tParcel);
 
-                for (int k = 0; k < truck.getHeight(); k++) {
+                for (int k = 0; k < truck.getZ(); k++) {
 
                     if (possibleToPlace(tParcel, i, j, k) == true) {
                         if ((i + j + k) < (minX + minY + minZ)) {
@@ -172,11 +172,11 @@ public class Random {
         boolean possible=true;
         ArrayList<Point3D> pos = p.getBlockLocations();
         for(int i=0;i<pos.size();i++){
-            if(pos.get(i).getX()+x>=0 && pos.get(i).getX()+x<truck.getWidth())
+            if(pos.get(i).getX()+x>=0 && pos.get(i).getX()+x<truck.getX())
             {
-                if(pos.get(i).getY()+y>=0 && pos.get(i).getY()+y<truck.getLength())
+                if(pos.get(i).getY()+y>=0 && pos.get(i).getY()+y<truck.getY())
                 {
-                    if(pos.get(i).getZ()+z>=0 && pos.get(i).getZ()+z<truck.getHeight())
+                    if(pos.get(i).getZ()+z>=0 && pos.get(i).getZ()+z<truck.getZ())
                     {
                         if(-1 != truck.getContainer()[((int) (pos.get(i).getX() + x))][((int) (pos.get(i).getY() + y))][((int) (pos.get(i).getZ() + z))])
                         {

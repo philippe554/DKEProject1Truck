@@ -141,9 +141,9 @@ public class Greedy {
         int bestRotation=0;
         ArrayList<Parcel> rotations = getAllRotations(p);
         for(int r=0;r<rotations.size();r++) {
-            for (int i = 0; i < truck.getWidth(); i++) {
-                for (int j = 0; j < truck.getLength(); j++) {
-                    for (int k = 0; k < truck.getHeight(); k++) {
+            for (int i = 0; i < truck.getX(); i++) {
+                for (int j = 0; j < truck.getY(); j++) {
+                    for (int k = 0; k < truck.getZ(); k++) {
                         if (possibleToPlace(rotations.get(r), i, j, k)) {
                             if ((i + j + k) < (minX + minY + minZ)) {
                                 minX = i;

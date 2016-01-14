@@ -42,13 +42,13 @@ public class Container {
             }
      
             
-    public int getWidth() {
+    public int getX() {
         return width;
     }
-    public int getLength() {
+    public int getY() {
         return length;
     }
-    public int getHeight() {
+    public int getZ() {
         return height;
     }
     public Point3D[] getVertices() { return vertices; }
