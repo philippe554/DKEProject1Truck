@@ -4,19 +4,19 @@ import java.util.ArrayList;
 public class Parcel implements Comparable<Parcel>
 {
 	//maximum number of times a piece can be rotated
-    private int rotations = 1;
+    protected int rotations = 1;
     //Locations of the parcel's blocks with respect to the (0,0,0) block
-    private ArrayList<Point3D> blockLocations = new ArrayList<Point3D>();
+    protected ArrayList<Point3D> blockLocations = new ArrayList<Point3D>();
     //Locations of the vertices of the parcel
     protected ArrayList<Point3D> vertices = new ArrayList<Point3D>();
     //Locations of the sides of the parcel
-    private ArrayList<Point3D[]> sides = new ArrayList<Point3D[]>();
+    protected ArrayList<Point3D[]> sides = new ArrayList<Point3D[]>();
     //Location of the (0,0,0) block with respect to upper container
     protected Point3D location = new Point3D(0,0,0);
     //ID to recognise each parcel
-    private int ID;
+    protected int ID;
     static int numberOfParcels = 0;
-    private double value;
+    protected double value;
 
     @Override
     public Parcel clone()
@@ -388,24 +388,24 @@ public class Parcel implements Comparable<Parcel>
 
      /** Gets the sides of a cuboid parcel, relevent to a higher container
      *
-     * @param temp 0 for vertices 0-7, 8 for vertices 8-15
+     * 
      */
-    private void setSides(int temp)
+    protected void setSides()
     {
-    	// empty sides list
+    	
 
-    Point3D[] s1 = {vertices.get(temp), vertices.get(temp+1), vertices.get(temp+2)};
-    	Point3D[] s2 = {vertices.get(temp), vertices.get(temp+1), vertices.get(temp+4)};
-    	Point3D[] s3 = {vertices.get(temp), vertices.get(temp+2), vertices.get(temp+4)};
-    	Point3D[] s4 = {vertices.get(temp+1), vertices.get(temp+2), vertices.get(temp+3)};
-    	Point3D[] s5 = {vertices.get(temp+1), vertices.get(temp+3), vertices.get(temp+7)};
-    	Point3D[] s6 = {vertices.get(temp+2), vertices.get(temp+3), vertices.get(temp+7)};
-    	Point3D[] s7 = {vertices.get(temp+1), vertices.get(temp+4), vertices.get(temp+5)};
-    	Point3D[] s8 = {vertices.get(temp+1), vertices.get(temp+5), vertices.get(temp+7)};
-    	Point3D[] s9 = {vertices.get(temp+4), vertices.get(temp+5), vertices.get(temp+7)};
-    	Point3D[] s10 = {vertices.get(temp+2), vertices.get(temp+4), vertices.get(temp+6)};
-    	Point3D[] s11 = {vertices.get(temp+4), vertices.get(temp+6), vertices.get(temp+7)};
-    	Point3D[] s12 = {vertices.get(temp+2), vertices.get(temp+6), vertices.get(temp+7)};
+    	Point3D[] s1 = {vertices.get(0), vertices.get( 1), vertices.get( 2)};
+    	Point3D[] s2 = {vertices.get(0), vertices.get( 1), vertices.get( 4)};
+    	Point3D[] s3 = {vertices.get(0), vertices.get( 2), vertices.get( 4)};
+    	Point3D[] s4 = {vertices.get( 1), vertices.get( 2), vertices.get( 3)};
+    	Point3D[] s5 = {vertices.get( 1), vertices.get( 3), vertices.get( 7)};
+    	Point3D[] s6 = {vertices.get( 2), vertices.get( 3), vertices.get( 7)};
+    	Point3D[] s7 = {vertices.get( 1), vertices.get( 4), vertices.get( 5)};
+    	Point3D[] s8 = {vertices.get( 1), vertices.get( 5), vertices.get( 7)};
+    	Point3D[] s9 = {vertices.get( 4), vertices.get( 5), vertices.get( 7)};
+    	Point3D[] s10 = {vertices.get( 2), vertices.get( 4), vertices.get( 6)};
+    	Point3D[] s11 = {vertices.get( 4), vertices.get( 6), vertices.get( 7)};
+    	Point3D[] s12 = {vertices.get( 2), vertices.get( 6), vertices.get( 7)};
 
     	sides.add(s1);
     	sides.add(s2);
@@ -434,12 +434,11 @@ public class Parcel implements Comparable<Parcel>
     public ArrayList<Point3D[]> getSides()
     {
         getVertices();
-        int tmp = vertices.size();
+        
         sides = new ArrayList<Point3D[]>();
 
-        if(tmp > 9)
-            setSides(8);
-        setSides(0);
+     
+        setSides();
 
         return sides;
     }
