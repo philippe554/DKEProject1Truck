@@ -10,9 +10,9 @@ public class DiagonalFill extends FillEngine{
         int numberOfA= (int) (Math.random()*100);
         int numberOfB= (int) (Math.random()*100);
         int numberOfC=(int) (Math.random()*100);
-        int numberOfL=(int) (Math.random()*0);
-        int numberOfP=(int) (Math.random()*0);
-        int numberOfT=(int) (Math.random()*0);
+        int numberOfL=0;//=(int) (Math.random()*0);
+        int numberOfP=0;//(int) (Math.random()*0);
+        int numberOfT=0;//(int) (Math.random()*0);
         System.out.println((numberOfA+numberOfB+numberOfC+numberOfL+numberOfP+numberOfT));
         ArrayList<Parcel> list = new ArrayList<Parcel>();
         for(int i=0;i<numberOfA;i++)
@@ -95,6 +95,7 @@ public class DiagonalFill extends FillEngine{
         {
             sReturn[0].c[j]=0;
         }
+        sReturn[0].c[0]=1;
         for(int j=3;j<6;j++)
         {
             sReturn[0].c[j]=-1;

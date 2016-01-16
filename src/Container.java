@@ -39,9 +39,9 @@ public class Container {
     }
     public int[][][] getContainer() {
         return container;
-            }
-     
-            
+    }
+
+
     public int getX() {
         return width;
     }
@@ -60,9 +60,9 @@ public class Container {
     public void addParcel(Parcel parcel)
     {
         for(Point3D point : parcel.getBlockLocations())
-   	    {
-   	        container[(int)point.getX()][(int)point.getY()][(int)point.getZ()] = parcel.getID();
-   	    }
+        {
+            container[(int)point.getX()][(int)point.getZ()][(int)point.getY()] = parcel.getID();
+        }
         containedParcels.add(parcel.clone());
     }
 
@@ -84,8 +84,6 @@ public class Container {
     }
 
     /* Check how much of the truck is empty (in %)
-
-
      */
     public int emptyPercent(){
         int emptyCounter = 0;

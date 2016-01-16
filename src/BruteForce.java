@@ -31,8 +31,10 @@ public class BruteForce
 
     public void parcelSolver(Container box, ArrayList<Parcel> pieces)
     {
+        //We're done if we don't have any more parcels to place in the list
         if(pieces.size() == 0)
         {
+            //If our container has better value than ever before, we save it as the new best
             if(sumList(box.getContainedParcels()) > sumList(bestSet))
             {
                 bestSet = new ArrayList<Parcel>();
@@ -42,29 +44,29 @@ public class BruteForce
         }
         else
         {
-            //Set the first piece as active
+            //Set the first piece as active and get the rotation list
             Parcel activeParcel = pieces.get(0);
+            ArrayList<Parcel> rotationList = getAllRotations(activeParcel);
             //Check if the piece can be used
             //For all locations
             for(int x = 0; x < box.getX(); x++)
             {
-                for(int z = 0; z < box.getZ(); z++)
+                for(int z = 0; z < box.getY(); z++)
                 {
-                    //Set the location to match coordinates, and above the box
-                    activeParcel.setLocation(new Point3D(x,-5,z));
-                    //For all rotations ofthe piece
-                    int rotations = activeParcel.getRotations();
-                    while(rotations > 0)
+                    //For all rotations of the piece
+                    for(Parcel p : rotationList)
                     {
+                        //Set the location to match coordinates, and above the box
+                        p.setLocation(new Point3D(x,-6,z));
                         //Drop it down
-                        dropDown(activeParcel,box);
+                        dropDown(p,box);
                         //Check if it is in the container in a valid position after dropping
-                        if(checkLocation(activeParcel,box))
+                        if(checkLocation(p,box))
                         {
                             //If yes, create new box as a copy of the old one
                             Container newBox = box.clone();
                             //Print the parcel to the new box
-                            newBox.addParcel(activeParcel);
+                            newBox.addParcel(p);
                             //Create new parcel list which doesn't contain current active parcel
                             ArrayList<Parcel> newPieces = new ArrayList<Parcel>();
                             for(int i = 1; i < pieces.size(); i++)
@@ -72,10 +74,7 @@ public class BruteForce
                             //Move on to new calculation with new box and pieces
                             parcelSolver(newBox,newPieces);
                         }
-                        //If not, or if coming from a lower level move on to the next rotation
-                        activeParcel.rebuild();
-                        rotateParcel(rotations,activeParcel);
-                        rotations--;
+
                     }
                 }
             }
@@ -86,10 +85,12 @@ public class BruteForce
             //Check if we have potential to reach a better solution with the remaining pieces
             if(sumList(pieces) + sumList(box.getContainedParcels()) > sumList(bestSet))
             {
-                //If we can we simple move on to the next piece like earlier
+                //If we can, we simple move on to the next piece like earlier
                 Container newBox = box.clone();
                 ArrayList<Parcel> newPieces = new ArrayList<Parcel>();
                 for(int i = 1; i < pieces.size(); i++)
+                    //We also exclude all pieces of the same type from this list
+                    //as we know none of them will fit the container
                     if(pieces.get(i).getValue() != activeParcel.getValue())
                         newPieces.add(pieces.get(i));
                 parcelSolver(newBox,newPieces);
@@ -100,7 +101,7 @@ public class BruteForce
 
     /**Drops the parcel down to "simulate" gravity in packing
      *
-     * @param p Parcel that need to be affected
+     * @param p Parcel that needs to be affected
      * @param box Container containing the parcel p
      */
     public void dropDown(Parcel p, Container box)
@@ -112,10 +113,10 @@ public class BruteForce
             for(Point3D point : p.getBlockLocations())
             {
                 boolean freeSpot = true;
-                if(point.getX() < box.getX() && point.getY() < box.getY() && point.getZ() < box.getZ() &&
+                if(point.getX() < box.getX() && point.getY() < box.getZ() && point.getZ() < box.getY() &&
                         point.getX() >= 0 && point.getY() >= 0 && point.getZ() >= 0)
-                            freeSpot = (box.getContainer()[(int)point.getX()][(int)point.getY()][(int)point.getZ()] == -1);
-                if(!(point.getY() < box.getY() && freeSpot))
+                    freeSpot = (box.getContainer()[(int)point.getX()][(int)point.getZ()][(int)point.getY()] == -1);
+                if(!(point.getY() < box.getZ() && freeSpot))
                     inTheBox = false;
             }
         }
@@ -133,35 +134,18 @@ public class BruteForce
         //Check for each block in the parcel
         for(Point3D point : parcel.getBlockLocations())
         {
-
             //Check that the block is not outside of the container
-            if(point.getX() < 0 || point.getY() < 0 || point.getZ() < 0)
+            if (point.getX() < 0 || point.getY() < 0 || point.getZ() < 0)
                 return false;
-            else if(point.getX() >= truck.getX() || point.getY() >= truck.getZ() || point.getZ() >= truck.getY())
+            else if (point.getX() >= truck.getX() || point.getY() >= truck.getZ() || point.getZ() >= truck.getY())
                 return false;
-            //Check that space occupied by the block is free
-            else if(truck.getContainer()[(int)point.getX()][(int)point.getY()][(int)point.getZ()] != -1)
+                //Check that space occupied by the block is free
+            else if (truck.getContainer()[(int) point.getX()][(int) point.getZ()][(int) point.getY()] != -1)
                 return false;
         }
         //If none of the cases apply we can return true, as the location for whole parcel is valid
         return true;
-    
-    
-   }
-   
-   public void rotateParcel(int rot, Parcel p)
-   {
-   // rotates parcel to move through all possible iterations.	   
-   if(rot > 12) {p.rotateY(); p.rotateY(); rot = rot-12;}
-   if(rot > 9) {p.rotateZ();}
-   if(rot > 6) {p.rotateZ();}
-   if(rot > 3) {p.rotateZ();}
-   if(rot%3==0) {p.rotateY();}
-   if(rot%3 == 2){p.rotateX();}
-   	   
-   	   
-   
-   }
+    }
 
     /** Gets the sum of the parcels' values in the list
      *
@@ -178,41 +162,65 @@ public class BruteForce
 
     public ArrayList<Parcel> getBestSet(){return bestSet;}
 
+    public ArrayList<Parcel> getAllRotations(Parcel p) {
+        ArrayList<Parcel> rotations = new ArrayList<Parcel>();
+        for(int j=0;j<4;j++) {
+            for (int i = 0; i < 4; i++) {
+                rotations.add(p.clone());
+                p.rotateZ();
+            }
+            p.rotateX();
+        }
+        p.rotateY();
+        for (int i = 0; i < 4; i++) {
+            rotations.add(p.clone());
+            p.rotateZ();
+        }
+        p.rotateY();
+        p.rotateY();
+        for (int i = 0; i < 4; i++) {
+            rotations.add(p.clone());
+            p.rotateZ();
+        }
+        p.rotateY();
+        //TODO: check if there are copies
+        return rotations;
+    }
+
     /** A method for testing purposes.
      *
      * @param args Not used
      */
-   public static void main(String[] args)
-   {
-       Container container = new Container(5,8,33);
-       ArrayList<Parcel> packets = new ArrayList<Parcel>();
-       for(int i = 0; i < 264; i++)
-           packets.add(new ParcelA());
-       BruteForce solver = new BruteForce(container, packets);
-       solver.parcelSolver(solver.truck,solver.listOfPackets);
+    public static void main(String[] args)
+    {
+        Container container = new Container(5,4,2);
+        ArrayList<Parcel> packets = new ArrayList<Parcel>();
+        for(int i = 0; i < 8; i++)
+            packets.add(new ParcelL());
+        BruteForce solver = new BruteForce(container, packets);
+        solver.parcelSolver(solver.truck,solver.listOfPackets);
 
-       System.out.println();
+        System.out.println();
 
-       for(Parcel p : solver.getBestSet())
-       {
-           container.addParcel(p);
-           System.out.println(p);
-       }
+        for(Parcel p : solver.getBestSet())
+        {
+            container.addParcel(p);
+        }
 
-       for(int i = 0; i < container.getContainer().length; i++)
-       {
-           for(int j = 0; j < container.getContainer()[0].length; j++)
-           {
-               for(int k = 0; k < container.getContainer()[0][0].length; k++)
-               {
-                   System.out.print(container.getContainer()[i][j][k]);
-               }
-               System.out.println();
-           }
-           System.out.println();
-           System.out.println();
-           System.out.println();
-       }
-   }
-   
+        for(int i = 0; i < container.getContainer().length; i++)
+        {
+            for(int j = 0; j < container.getContainer()[0].length; j++)
+            {
+                for(int k = 0; k < container.getContainer()[0][0].length; k++)
+                {
+                    System.out.print(container.getContainer()[i][j][k]);
+                }
+                System.out.println();
+            }
+            System.out.println();
+            System.out.println();
+            System.out.println();
+        }
+    }
+
 }

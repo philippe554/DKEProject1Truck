@@ -10,8 +10,12 @@ import java.util.ArrayList;
 public abstract class FillEngine {
     private static Parcel[] parcelPrototype={new ParcelA(),new ParcelB(),new ParcelC(),new ParcelL(),new ParcelP(), new ParcelT()};
 
+    protected double cScore=0;
+    protected double cFilled=1;
+
     public class Result{
         public double score=0;
+        public double combinedScore=0;
         public int proccentFilled=0;
         public int scoreID=0;
     }
@@ -186,8 +190,10 @@ public abstract class FillEngine {
         {
             ArrayList<Parcel> tLoadedParcels = new ArrayList<Parcel>();
             Result newResult=fill(listOfPackets,tLoadedParcels,new Container(33,8,5),settings[i]);
-            if(newResult.score>result.score)
+            newResult.combinedScore=cScore*result.score+cFilled*(100-result.proccentFilled);
+            if(newResult.combinedScore>result.combinedScore)
             {
+                result.combinedScore=newResult.combinedScore;
                 result.scoreID=i;
                 result.score=newResult.score;
                 result.proccentFilled=newResult.proccentFilled;
