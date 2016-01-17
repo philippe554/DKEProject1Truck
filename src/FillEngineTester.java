@@ -78,10 +78,10 @@ public class FillEngineTester extends JPanel {
         engine3D=new Engine3D();
         engine3D.setup();
 
-        fillEngine = new HillClimb();
+        //fillEngine = new HillClimb();
         //fillEngine = new Genetic();
-        //fillEngine = new DiagonalFill();
-        amountOfGenerations=2;
+        fillEngine = new DiagonalFill();
+        amountOfGenerations=1;
         this.run(list);
     }
     public void run(ArrayList<Parcel> listOfPackets){
