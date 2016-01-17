@@ -130,5 +130,4 @@ public class FillEngineTester extends JPanel {
             localGraphics2D.drawString("Value "+Integer.toString(i)+": "+Double.toString(values[i]),10,50 + 20*i);
         }*/
     }
-
 }
