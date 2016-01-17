@@ -61,7 +61,7 @@ public class Container {
     {
         for(Point3D point : parcel.getBlockLocations())
         {
-            container[(int)point.getX()][(int)point.getZ()][(int)point.getY()] = parcel.getID();
+            container[(int)point.getX()][(int)point.getY()][(int)point.getZ()] = parcel.getID();
         }
         containedParcels.add(parcel.clone());
     }

@@ -171,7 +171,7 @@ class Engine3D {
     private int amountOfThreads=4;
 
     public void setup(){
-        hViewAngle=120.0;
+        hViewAngle=60.0;
         vViewAngle=hViewAngle;
         viewDesity=5.0;
         hPixels=viewDesity*hViewAngle;
@@ -200,7 +200,7 @@ class Engine3D {
             {
                 for(int k=0;k<newSides.get(j).length;k++)
                 {
-                    vertices.add(newSides.get(j)[k]);
+                    vertices.add(new Point3D( newSides.get(j)[k].getX()-16.5,newSides.get(j)[k].getY()-2.5,newSides.get(j)[k].getZ()));
                 }
                 side.add(new Side(vertices.size()-3,vertices.size()-2,vertices.size()-1));//front
                 side.get(side.size()-1).colorR=colorR;

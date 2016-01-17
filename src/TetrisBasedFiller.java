@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 
 class TetrisBasedFiller extends JPanel {
 
+    //OLD CODE!!!
     class Side{
         private int a,b,c;
         private double planeA;
