@@ -19,6 +19,9 @@ public class Parcel implements Comparable<Parcel>
     private int ID;
     static int numberOfParcels = 0;
     private double value;
+    protected int parcelType=0;
+
+    public int getParcelType(){return parcelType;}
 
     @Override
     public Parcel clone()
@@ -34,6 +37,7 @@ public class Parcel implements Comparable<Parcel>
         cloneParcel.setValue(this.getValue());
         cloneParcel.setRotations(this.getRotations());
         cloneParcel.setID(this.getID());
+        cloneParcel.parcelType=this.parcelType;
         return cloneParcel;
     }
 

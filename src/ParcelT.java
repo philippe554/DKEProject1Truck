@@ -11,6 +11,7 @@ public class ParcelT extends Parcel
         super();
         construct();
         setValue(5);
+        parcelType=5;
     }
 
     public ParcelT(double value)
@@ -18,6 +19,7 @@ public class ParcelT extends Parcel
         super();
         construct();
         setValue(value);
+        parcelType=5;
     }
 
     public ParcelT(double value, Point3D location)
@@ -26,6 +28,7 @@ public class ParcelT extends Parcel
         construct();
         setValue(value);
         this.setLocation(location);
+        parcelType=5;
     }
 
     protected void construct()
