@@ -11,6 +11,7 @@ public class ParcelL extends Parcel
         construct();
         setValue(3);
         setRotations(24);
+        parcelType=3;
     }
 
     public ParcelL(double value)
@@ -19,6 +20,7 @@ public class ParcelL extends Parcel
         construct();
         setValue(value);
         setRotations(24);
+        parcelType=3;
     }
 
     public ParcelL(double value, Point3D location)
@@ -28,6 +30,7 @@ public class ParcelL extends Parcel
         setValue(value);
         this.setLocation(location);
         setRotations(24);
+        parcelType=3;
     }
 
     protected void construct()

@@ -12,9 +12,8 @@ import java.util.LinkedList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-class TetrisBasedFiller extends JPanel {
+class Engine3D {
 
-    //OLD CODE!!!
     class Side{
         private int a,b,c;
         private double planeA;
@@ -162,8 +161,6 @@ class TetrisBasedFiller extends JPanel {
     private Point3D camHVector;
     private Point3D camVVector;
 
-    public int fps=0;
-
     private BufferedImage img;
     private double hViewAngle;
     private double vViewAngle;
@@ -173,9 +170,7 @@ class TetrisBasedFiller extends JPanel {
 
     private int amountOfThreads=4;
 
-    public double[]values = {0};
-
-    public TetrisBasedFiller() {
+    public void setup(){
         hViewAngle=60.0;
         vViewAngle=hViewAngle;
         viewDesity=5.0;
@@ -193,117 +188,8 @@ class TetrisBasedFiller extends JPanel {
         img = new BufferedImage((int)(hViewAngle*viewDesity), (int)(vViewAngle*viewDesity), BufferedImage.TYPE_INT_RGB);
 
         vertices = new ArrayList<Point3D>();
-        /*vertices.add(new Point3D(  -100,  -3,  -100 ));
-        vertices.add(new Point3D(  -100,  -3,  100 ));
-        vertices.add(new Point3D(  100,  -3,  100 ));
-        vertices.add(new Point3D(  100,  -3,  -100 ));*/
-
         side = new ArrayList<Side>();
-        /*side.add(new Side(0,1,2));
-        side.add(new Side(0,3,2));
-        side.get(0).colorR=0;
-        side.get(1).colorR=0;
-        side.get(0).colorG=150;
-        side.get(1).colorG=150;
-        side.get(0).colorB=0;
-        side.get(1).colorB=0;*/
-
-        /*LinkedList<Parcel> parcels = new LinkedList<Parcel>();
-        parcels.add(new ParcelA(3,new Point3D(0,5,0)));
-        addParcels(parcels);
-*/
-        /*
-        vertices.add(new Point3D( -2, -2, -2 ));
-        vertices.add(new Point3D( -2, -2,  2 ));
-        vertices.add(new Point3D( -2,  10, -2 ));
-        vertices.add(new Point3D( -2,  10,  2 ));
-        vertices.add(new Point3D(  2, -2, -2 ));
-        vertices.add(new Point3D(  2, -2,  2 ));
-        vertices.add(new Point3D(  2,  10, -2 ));
-        vertices.add(new Point3D(  2,  10,  2 ));
-
-        vertices.add(new Point3D( -2+5, -2, -2 ));
-        vertices.add(new Point3D( -2+5, -2,  2 ));
-        vertices.add(new Point3D( -2+5,  2, -2 ));
-        vertices.add(new Point3D( -2+5,  2,  2 ));
-        vertices.add(new Point3D(  2+5, -2, -2 ));
-        vertices.add(new Point3D(  2+5, -2,  2 ));
-        vertices.add(new Point3D(  2+5,  2, -2 ));
-        vertices.add(new Point3D(  2+5,  2,  2 ));
-
-        side.add(new Side(0,2,4));//front
-        side.add(new Side(2,4,6));
-        side.add(new Side(0,1,3));//left
-        side.add(new Side(0,2,3));
-        side.add(new Side(2,3,7));//top
-        side.add(new Side(2,6,7));
-        side.add(new Side(0,1,5));//bottom
-        side.add(new Side(0,4,5));
-        side.add(new Side(4,6,7));//right
-        side.add(new Side(4,5,7));
-        side.add(new Side(1,3,7));//back
-        side.add(new Side(1,5,7));
-
-        side.add( new Side(0+8,2+8,4+8));//front
-        side.add( new Side(2+8,4+8,6+8));
-        side.add( new Side(0+8,1+8,3+8));//left
-        side.add( new Side(0+8,2+8,3+8));
-        side.add( new Side(2+8,3+8,7+8));//top
-        side.add( new Side(2+8,6+8,7+8));
-        side.add( new Side(0+8,1+8,5+8));//bottom
-        side.add( new Side(0+8,4+8,5+8));
-        side.add( new Side(4+8,6+8,7+8));//right
-        side.add( new Side(4+8,5+8,7+8));
-        side.add( new Side(1+8,3+8,7+8));//back
-        side.add( new Side(1+8,5+8,7+8));*/
     }
-    public static void main(String[]args) {
-        int x=400;
-        int y=400;
-        //make new frame
-        JFrame window = new JFrame("Pentomino");
-        window.setPreferredSize(new Dimension(x,y));
-
-        //set some parameters
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setResizable(false);
-
-        //place in the center of the screen
-        Dimension localDimension = Toolkit.getDefaultToolkit().getScreenSize();
-        window.setLocation((localDimension.width - x) / 2, (localDimension.height - y) / 2);
-
-        //add the PaintComponent to the window
-        TetrisBasedFiller tetrisBasedFiller = new TetrisBasedFiller();
-        window.add(tetrisBasedFiller);
-
-        //fit size
-        window.pack();
-
-        //make visible
-        window.setVisible(true);
-
-        long lastFPSRecordTime=System.currentTimeMillis();
-        int frames=0;
-
-        while(true) {
-            frames++;
-            if(lastFPSRecordTime+1000<System.currentTimeMillis())
-            {
-                tetrisBasedFiller.fps=frames;
-                frames=0;
-                lastFPSRecordTime+=1000;
-            }
-            tetrisBasedFiller.rotate();
-            tetrisBasedFiller.renderImage();
-            tetrisBasedFiller.repaint();
-            /*try {
-                Thread.sleep(20);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }*/
-        }
-    }
-
     public void addParcels(ArrayList<Parcel> parcels) {
         for(int i=0;i<parcels.size();i++) {
             int colorR = (int) (Math.random() * 150);
@@ -314,7 +200,7 @@ class TetrisBasedFiller extends JPanel {
             {
                 for(int k=0;k<newSides.get(j).length;k++)
                 {
-                    vertices.add(newSides.get(j)[k]);
+                    vertices.add(new Point3D( newSides.get(j)[k].getX()-16.5,newSides.get(j)[k].getY()-2.5,newSides.get(j)[k].getZ()));
                 }
                 side.add(new Side(vertices.size()-3,vertices.size()-2,vertices.size()-1));//front
                 side.get(side.size()-1).colorR=colorR;
@@ -393,17 +279,168 @@ class TetrisBasedFiller extends JPanel {
         vertices.clear();
         side.clear();
     }
-    protected void paintComponent(Graphics g) {
-        Graphics2D localGraphics2D = (Graphics2D)g;
-        localGraphics2D.drawImage(img,0,0,null);
-        localGraphics2D.setColor(Color.red);
-        localGraphics2D.drawString("FPS: "+Integer.toString(fps),10,10);
-        localGraphics2D.drawString("Sides: "+Integer.toString(side.size()),10,30);
-        for(int i=0;i<values.length;i++)
+    public void rotate(int degree){
+        double angle =degree/180.0*Math.PI;
+
+        double[][] m=new double[3][3];
+        m[0][0]=Math.cos(angle);m[0][1]=0;m[0][2]=Math.sin(angle);
+        m[1][0]=0;m[1][1]=1;m[1][2]=0;
+        m[2][0]=-Math.sin(angle);m[2][1]=0;m[2][2]=Math.cos(angle);
+
+        for(int i=0;i<vertices.size();i++)
         {
-            localGraphics2D.drawString("Value "+Integer.toString(i)+": "+Double.toString(values[i]),10,50 + 20*i);
+            vertices.set(i, new Point3D(m[0][0]*vertices.get(i).getX() + m[0][1]*vertices.get(i).getY() + m[0][2]*vertices.get(i).getZ()
+                    ,m[1][0]*vertices.get(i).getX() + m[1][1]*vertices.get(i).getY() + m[1][2]*vertices.get(i).getZ()
+                    ,m[2][0]*vertices.get(i).getX() + m[2][1]*vertices.get(i).getY() + m[2][2]*vertices.get(i).getZ()));
         }
+        for(int i=0;i<side.size();i++)
+        {
+            side.get(i).calcPlane();
+        }
+
+        /*sun = new Point3D(m[0][0]*sun.getX() + m[0][1]*sun.getY() + m[0][2]*sun.getZ()
+                ,m[1][0]*sun.getX() + m[1][1]*sun.getY() + m[1][2]*sun.getZ()
+                ,m[2][0]*sun.getX() + m[2][1]*sun.getY() + m[2][2]*sun.getZ());*/
     }
+    public BufferedImage renderImage(){
+        RenderThread RT[]= new RenderThread[amountOfThreads];
+        for(int i=0;i<amountOfThreads;i++) {
+            RT[i] = new RenderThread((int)(hPixels*i / amountOfThreads), (int) (hPixels* (i+1) / amountOfThreads), 0, (int) (vPixels));
+            RT[i].start();
+        }
+        for(int i=0;i<amountOfThreads;i++) {
+            try {
+                RT[i].join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return img;
+    }
+    public void addBox(double minX,double maxX,double minY,double maxY,double minZ,double maxZ, int colorR, int colorG, int colorB) {
+        vertices.add(new Point3D(  minX,  minY,  minZ ));
+        vertices.add(new Point3D(  minX,  maxY,  minZ ));
+        vertices.add(new Point3D(  minX,  maxY,  maxZ ));
+        vertices.add(new Point3D(  minX,  minY,  maxZ ));
+        side.add(new Side(vertices.size()-4,vertices.size()-3,vertices.size()-2));
+        side.get(side.size()-1).colorR=colorR;
+        side.get(side.size()-1).colorG=colorG;
+        side.get(side.size()-1).colorB=colorB;
+        side.add(new Side(vertices.size()-4,vertices.size()-1,vertices.size()-2));
+        side.get(side.size()-1).colorR=colorR;
+        side.get(side.size()-1).colorG=colorG;
+        side.get(side.size()-1).colorB=colorB;
+
+        vertices.add(new Point3D(  maxX,  minY,  minZ ));
+        vertices.add(new Point3D(  maxX,  maxY,  minZ ));
+        vertices.add(new Point3D(  maxX,  maxY,  maxZ ));
+        vertices.add(new Point3D(  maxX,  minY,  maxZ ));
+        side.add(new Side(vertices.size()-4,vertices.size()-3,vertices.size()-2));
+        side.get(side.size()-1).colorR=colorR;
+        side.get(side.size()-1).colorG=colorG;
+        side.get(side.size()-1).colorB=colorB;
+        side.add(new Side(vertices.size()-4,vertices.size()-1,vertices.size()-2));
+        side.get(side.size()-1).colorR=colorR;
+        side.get(side.size()-1).colorG=colorG;
+        side.get(side.size()-1).colorB=colorB;
+
+        vertices.add(new Point3D(  minX,  minY,  minZ ));
+        vertices.add(new Point3D(  maxX,  minY,  minZ ));
+        vertices.add(new Point3D(  maxX,  minY,  maxZ ));
+        vertices.add(new Point3D(  minX,  minY,  maxZ ));
+        side.add(new Side(vertices.size()-4,vertices.size()-3,vertices.size()-2));
+        side.get(side.size()-1).colorR=colorR;
+        side.get(side.size()-1).colorG=colorG;
+        side.get(side.size()-1).colorB=colorB;
+        side.add(new Side(vertices.size()-4,vertices.size()-1,vertices.size()-2));
+        side.get(side.size()-1).colorR=colorR;
+        side.get(side.size()-1).colorG=colorG;
+        side.get(side.size()-1).colorB=colorB;
+
+        vertices.add(new Point3D(  minX,  maxY,  minZ ));
+        vertices.add(new Point3D(  maxX,  maxY,  minZ ));
+        vertices.add(new Point3D(  maxX,  maxY,  maxZ ));
+        vertices.add(new Point3D(  minX,  maxY,  maxZ ));
+        side.add(new Side(vertices.size()-4,vertices.size()-3,vertices.size()-2));
+        side.get(side.size()-1).colorR=colorR;
+        side.get(side.size()-1).colorG=colorG;
+        side.get(side.size()-1).colorB=colorB;
+        side.add(new Side(vertices.size()-4,vertices.size()-1,vertices.size()-2));
+        side.get(side.size()-1).colorR=colorR;
+        side.get(side.size()-1).colorG=colorG;
+        side.get(side.size()-1).colorB=colorB;
+
+        vertices.add(new Point3D(  minX,  minY,  minZ ));
+        vertices.add(new Point3D(  maxX,  minY,  minZ ));
+        vertices.add(new Point3D(  maxX,  maxY,  minZ ));
+        vertices.add(new Point3D(  minX,  maxY,  minZ ));
+        side.add(new Side(vertices.size()-4,vertices.size()-3,vertices.size()-2));
+        side.get(side.size()-1).colorR=colorR;
+        side.get(side.size()-1).colorG=colorG;
+        side.get(side.size()-1).colorB=colorB;
+        side.add(new Side(vertices.size()-4,vertices.size()-1,vertices.size()-2));
+        side.get(side.size()-1).colorR=colorR;
+        side.get(side.size()-1).colorG=colorG;
+        side.get(side.size()-1).colorB=colorB;
+
+        vertices.add(new Point3D(  minX,  minY,  maxZ ));
+        vertices.add(new Point3D(  maxX,  minY,  maxZ ));
+        vertices.add(new Point3D(  maxX,  maxY,  maxZ ));
+        vertices.add(new Point3D(  minX,  maxY,  maxZ ));
+        side.add(new Side(vertices.size()-4,vertices.size()-3,vertices.size()-2));
+        side.get(side.size()-1).colorR=colorR;
+        side.get(side.size()-1).colorG=colorG;
+        side.get(side.size()-1).colorB=colorB;
+        side.add(new Side(vertices.size()-4,vertices.size()-1,vertices.size()-2));
+        side.get(side.size()-1).colorR=colorR;
+        side.get(side.size()-1).colorG=colorG;
+        side.get(side.size()-1).colorB=colorB;
+
+    }
+    public void loadTruck() {
+        side.clear();
+        vertices.clear();
+
+        vertices.add(new Point3D(  -100,  -0.5,  -100 ));//0
+        vertices.add(new Point3D(  -100,  -0.5,  100 ));//1
+        vertices.add(new Point3D(  100,  -0.5,  100 ));//2
+        vertices.add(new Point3D(  100,  -0.5,  -100 ));//3
+        side.add(new Side(0,1,2));//0
+        side.add(new Side(0,3,2));//1
+        side.get(0).colorR=0;
+        side.get(1).colorR=0;
+        side.get(0).colorG=150;
+        side.get(1).colorG=150;
+        side.get(0).colorB=0;
+        side.get(1).colorB=0;
+
+        addBox(-100,100,-0.5,0,-4,4   ,50,50,50);
+
+        addBox(-16.5,16.5,1,9,-2.5,2.5   ,150,0,0);
+        addBox(16.5,24,1,3.5,-2.5,2.5   ,20,20,20);
+        addBox(20,24,3.5,8,-2.5,2.5   ,150,150,150);
+
+        addBox(-14,-11,0,3,-2.5,-3.5  ,0,0,0);
+        addBox(-10,-7,0,3,-2.5,-3.5  ,0,0,0);
+        addBox(-6,-3,0,3,-2.5,-3.5  ,0,0,0);
+        addBox(-14,-11,0,3,2.5,3.5  ,0,0,0);
+        addBox(-10,-7,0,3,2.5,3.5  ,0,0,0);
+        addBox(-6,-3,0,3,2.5,3.5  ,0,0,0);
+
+        addBox(13,16,0,3,-2.5,-3.5  ,0,0,0);
+        addBox(13,16,0,3,2.5,3.5  ,0,0,0);
+        addBox(20,23,0,3,-2.5,-3.5  ,0,0,0);
+        addBox(20,23,0,3,2.5,3.5  ,0,0,0);
+
+        addBox(24,24.1,5,7.5,-2,2  ,150,150,0);
+        addBox(22,23.5,5,7.5,2.5,2.6  ,150,150,0);
+        addBox(22,23.5,5,7.5,-2.6,2.6  ,150,150,0);
+
+        addBox(27,27.5,-0.5,15,-5,-5.5  ,20,20,20);
+        addBox(26.7,27.8,15,16,-2,-5.8  ,20,20,20);
+        sun = new Point3D(27.25,13.5,-2.3);
+    }
+
     private Point3D subtract3D(Point3D p1,Point3D p2) {
         return new Point3D(p1.getX()-p2.getX(),p1.getY()-p2.getY(),p1.getZ()-p2.getZ());
     }
@@ -429,42 +466,4 @@ class TetrisBasedFiller extends JPanel {
             return false;
         }
     }
-    public void rotate(){
-        double angle =1/180.0*Math.PI;
-
-        double[][] m=new double[3][3];
-        m[0][0]=Math.cos(angle);m[0][1]=0;m[0][2]=Math.sin(angle);
-        m[1][0]=0;m[1][1]=1;m[1][2]=0;
-        m[2][0]=-Math.sin(angle);m[2][1]=0;m[2][2]=Math.cos(angle);
-
-        for(int i=0;i<vertices.size();i++)
-        {
-            vertices.set(i, new Point3D(m[0][0]*vertices.get(i).getX() + m[0][1]*vertices.get(i).getY() + m[0][2]*vertices.get(i).getZ()
-                    ,m[1][0]*vertices.get(i).getX() + m[1][1]*vertices.get(i).getY() + m[1][2]*vertices.get(i).getZ()
-                    ,m[2][0]*vertices.get(i).getX() + m[2][1]*vertices.get(i).getY() + m[2][2]*vertices.get(i).getZ()));
-        }
-        for(int i=0;i<side.size();i++)
-        {
-            side.get(i).calcPlane();
-        }
-
-        /*sun = new Point3D(m[0][0]*sun.getX() + m[0][1]*sun.getY() + m[0][2]*sun.getZ()
-                ,m[1][0]*sun.getX() + m[1][1]*sun.getY() + m[1][2]*sun.getZ()
-                ,m[2][0]*sun.getX() + m[2][1]*sun.getY() + m[2][2]*sun.getZ());*/
-    }
-    public void renderImage(){
-        RenderThread RT[]= new RenderThread[amountOfThreads];
-        for(int i=0;i<amountOfThreads;i++) {
-            RT[i] = new RenderThread((int)(hPixels*i / amountOfThreads), (int) (hPixels* (i+1) / amountOfThreads), 0, (int) (vPixels));
-            RT[i].start();
-        }
-        for(int i=0;i<amountOfThreads;i++) {
-            try {
-                RT[i].join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    public BufferedImage getImage(){return img;}
 }
