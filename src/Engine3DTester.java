@@ -51,6 +51,7 @@ public class Engine3DTester extends JPanel{
             }
             engine3D.rotate(1);
             engine3DTester.img =engine3D.renderImage();
+            engine3DTester.repaint();
         }
     }
     protected void paintComponent(Graphics g) {

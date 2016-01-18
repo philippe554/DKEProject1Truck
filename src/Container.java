@@ -89,7 +89,7 @@ public class Container {
 
     /* Check how much of the truck is empty (in %)
      */
-    public int emptyPercent(){
+    public double emptyPercent(){
         int emptyCounter = 0;
         int totalCounter = 0;
         for (int i = 0; i < container.length; i++) {
@@ -103,7 +103,7 @@ public class Container {
             }
         }
 
-        return ((emptyCounter * 100)/totalCounter);
+        return (double)(emptyCounter * 100.0)/(double)totalCounter;
     }
 
     /** Clones the current container

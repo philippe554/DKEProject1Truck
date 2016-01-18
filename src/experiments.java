@@ -10,7 +10,7 @@ import java.util.Arrays;
  */
 public class experiments {
     private static int amountDatabase[][]={
-            {100,0,0,0,0,0},
+            /*{100,0,0,0,0,0},
             {0,100,0,0,0,0},
             {0,0,100,0,0,0},
             {0,0,0,300,0,0},
@@ -19,13 +19,13 @@ public class experiments {
             {100,100,100,0,0,0},
             {50,50,50,0,0,0},
             {0,0,0,300,300,300},
-            {0,0,0,100,100,100},
+            */{0,0,0,100,100,100}/*,
             {50,50,50,50,50,50},
             {25,25,25,25,25,25},
             {-1,-1,-1,-1,-1,-1,50},
             {-1,-1,-1,0,0,0,75},
             {0,0,0,-1,-1,-1,200},
-            {100,100,100,300,300,300}};
+            {100,100,100,300,300,300}*/};
     private static Point3D containerSize=new Point3D(33,8,5);
 
     private static ArrayList<Parcel> makeList(int j) {
@@ -77,9 +77,9 @@ public class experiments {
     }
     public static void main(String[]args) {
         startOutputResult();
-        run(new DiagonalFill(),1,"DiagonalFill");
-        run(new Genetic(),10,"Genetic");
-        run(new HillClimb(),10,"HillClimb");
+        //run(new DiagonalFill(),1,"DiagonalFill");
+        run(new Genetic(),50,"Genetic");
+        //run(new HillClimb(),10,"HillClimb");
     }
     private static void run(FillEngine fillEngine,int amountOfGenerations,String type) {
         for (int i = 0; i < amountDatabase.length; i++) {

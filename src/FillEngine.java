@@ -11,12 +11,12 @@ public abstract class FillEngine {
     private static Parcel[] parcelPrototype={new ParcelA(),new ParcelB(),new ParcelC(),new ParcelL(),new ParcelP(), new ParcelT()};
 
     protected double cScore=1;
-    protected double cFilled=5;
+    protected double cFilled=1;
 
     public class Result{
         public double score=0;
         public double combinedScore=0;
-        public int proccentFilled=0;
+        public double proccentFilled=0;
         public int scoreID=0;
     }
     public class Setting {
