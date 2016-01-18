@@ -60,7 +60,7 @@ public class Parcel implements Comparable<Parcel>
     {
         ID = numberOfParcels;
         numberOfParcels++;
-        blockLocations.add(new Point3D(0,0,0));
+        //blockLocations.add(new Point3D(0,0,0));
     }
 
     /** Constructor from a set of point locations to a defined location
@@ -357,21 +357,20 @@ public class Parcel implements Comparable<Parcel>
      *
      * @param blocks of Point3D
      */
-    protected void setVertices(ArrayList<Point3D> blocks)
-    {
+    protected void setVertices(ArrayList<Point3D> blocks) {
 
-        int max_x = 1;
-        int max_y = 1;
-        int max_z = 1;
+        int max_x = 0;
+        int max_y = 0;
+        int max_z = 0;
         int min_x = 999;
         int min_y = 999;
         int min_z = 999;
 
         for(Point3D point : blocks)
         {
-            if((point.getX()+1) > max_x) max_x = (int)point.getX()+1;
-            if((point.getY()+1) > max_y) max_y = (int)point.getY()+1;
-            if((point.getZ()+1) > max_z) max_z = (int)point.getZ()+1;
+            if((point.getX()) > max_x) max_x = (int)point.getX();
+            if((point.getY()) > max_y) max_y = (int)point.getY();
+            if((point.getZ()) > max_z) max_z = (int)point.getZ();
 
             if((point.getX()) < min_x) min_x = (int)point.getX();
             if((point.getY()) < min_y) min_y = (int)point.getY();
@@ -388,19 +387,19 @@ public class Parcel implements Comparable<Parcel>
                     if(k==0){
                         tmp_x=min_x;
                     }else{
-                        tmp_x = max_x;
+                        tmp_x = max_x+1;
                     }
                     int tmp_y;
                     if(j==0){
                         tmp_y=min_y;
                     }else{
-                        tmp_y = max_y;
+                        tmp_y = max_y+1;
                     }
                     int tmp_z;
                     if(i==0){
                         tmp_z=min_z;
                     }else{
-                        tmp_z = max_z;
+                        tmp_z = max_z+1;
                     }
                     vertices.add(new Point3D(tmp_x,tmp_y,tmp_z));
 
@@ -431,6 +430,14 @@ public class Parcel implements Comparable<Parcel>
             vertices.add(point);
         }
 
+        System.out.println(vertices.get(0));
+        System.out.println(vertices.get(1));
+        System.out.println(vertices.get(2));
+        System.out.println(vertices.get(3));
+        System.out.println(vertices.get(4));
+        System.out.println(vertices.get(5));
+        System.out.println(vertices.get(6));
+        System.out.println(vertices.get(7));
 
         return result;
     }
@@ -479,15 +486,82 @@ public class Parcel implements Comparable<Parcel>
      */
     public ArrayList<Point3D[]> getSides()
     {
-        getVertices();
+        if(parcelType<=3) {
+            getVertices();
+        }else if(parcelType==4)
+        {
+            getVerticesL();
+        }
+        else if(parcelType==5)
+        {
+            getVerticesP();
+        }
+        else if(parcelType==6)
+        {
+            getVerticesT();
+        }
         int tmp = vertices.size();
         sides = new ArrayList<Point3D[]>();
 
-        if(tmp > 9)
+        if(tmp > 9){
             setSides(8);
+        }
         setSides(0);
 
         return sides;
+    }
+    public ArrayList<Point3D> getVerticesL(){
+        ArrayList<Point3D> part1 = new ArrayList<Point3D>();
+        ArrayList<Point3D> part2 = new ArrayList<Point3D>();
+        ArrayList<Point3D> result = new ArrayList<Point3D>();
+
+        part1.add(this.getBlockLocations().get(0));
+        part1.add(this.getBlockLocations().get(1));
+        part1.add(this.getBlockLocations().get(2));
+        part1.add(this.getBlockLocations().get(3));
+
+        part2.add(this.getBlockLocations().get(4));
+
+        vertices.clear();
+        setVertices(part1);
+        setVertices(part2);
+
+        return result;
+    }
+    public ArrayList<Point3D> getVerticesP(){
+        ArrayList<Point3D> part1 = new ArrayList<Point3D>();
+        ArrayList<Point3D> part2 = new ArrayList<Point3D>();
+        ArrayList<Point3D> result = new ArrayList<Point3D>();
+
+        part1.add(this.getBlockLocations().get(0));
+        part1.add(this.getBlockLocations().get(1));
+        part1.add(this.getBlockLocations().get(2));
+        part1.add(this.getBlockLocations().get(3));
+
+        part2.add(this.getBlockLocations().get(4));
+
+        vertices.clear();
+        setVertices(part1);
+        setVertices(part2);
+        return result;
+    }
+    public ArrayList<Point3D> getVerticesT() {
+        ArrayList<Point3D> part1 = new ArrayList<Point3D>();
+        ArrayList<Point3D> part2 = new ArrayList<Point3D>();
+        ArrayList<Point3D> result = new ArrayList<Point3D>();
+
+        part1.add(this.getBlockLocations().get(0));
+        part1.add(this.getBlockLocations().get(1));
+
+        part2.add(this.getBlockLocations().get(2));
+        part2.add(this.getBlockLocations().get(3));
+        part2.add(this.getBlockLocations().get(4));
+
+        vertices.clear();
+        setVertices(part1);
+        setVertices(part2);
+
+        return result;
     }
 
     /** Sets the ID for the parcel. Meant for cloning

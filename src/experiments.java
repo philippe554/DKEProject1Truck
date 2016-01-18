@@ -77,8 +77,8 @@ public class experiments {
     }
     public static void main(String[]args) {
         startOutputResult();
-        //run(new DiagonalFill(),1,"DiagonalFill");
-        run(new Genetic(),50,"Genetic");
+        run(new DiagonalFill(),1,"DiagonalFill");
+        //run(new Genetic(),50,"Genetic");
         //run(new HillClimb(),10,"HillClimb");
     }
     private static void run(FillEngine fillEngine,int amountOfGenerations,String type) {
