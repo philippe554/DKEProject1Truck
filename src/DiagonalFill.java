@@ -10,7 +10,7 @@ public class DiagonalFill extends FillEngine{
     public Setting[] mutate(Setting s) {
         Setting[] sReturn = new Setting[1];
         sReturn[0]=new Setting();
-        sReturn[0].c[0]=0;
+        sReturn[0].c[0]=1;
         sReturn[0].c[1]=1;
         for(int j=2;j<5;j++)
         {

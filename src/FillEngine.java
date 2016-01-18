@@ -195,8 +195,7 @@ public abstract class FillEngine {
         }
         return s;
     }
-    public Setting createCustomSetting(double c1,double c2, double c3, double c4, double c5)
-    {
+    public Setting createCustomSetting(double c1,double c2, double c3, double c4, double c5) {
         Setting s = new Setting();
         s.c[0]=c1;
         s.c[1]=c2;

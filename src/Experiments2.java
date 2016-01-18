@@ -8,7 +8,7 @@ import java.util.Arrays;
 /**
  * Created by pmmde on 1/17/2016.
  */
-public class experiments {
+public class Experiments2 {
     private static int amountDatabase[][]={
             {100,0,0,0,0,0},
             {0,100,0,0,0,0},
@@ -78,9 +78,9 @@ public class experiments {
     public static void main(String[]args) {
         startOutputResult();
         //run(new DiagonalFill(),1,"DiagonalFill");
-        run(new Genetic(),20,"Genetic");
+        //run(new Genetic(),20,"Genetic");
         //run(new HillClimb(),10,"HillClimb");
-        //run(new Random(),1,"Random");
+        run(new Random(),1,"Random");
     }
     private static void run(FillEngine fillEngine,int amountOfGenerations,String type) {
         for (int i = 0; i < amountDatabase.length; i++) {
@@ -112,7 +112,7 @@ public class experiments {
     private static void startOutputResult() {
         try
         {
-            String filename= "data.csv";
+            String filename= "data1.csv";
             FileWriter fw = new FileWriter(filename,true);
             fw.write("type,databaseID,generation,time,A,B,C,L,P,T,A loaded,B loaded,C loaded,L loaded,P loaded,T loaded,combined score,score,filled,C1,C2,C3,C4,C5,C6,start C1,start C2,start C3,start C4,start C5,start C6\n");
             fw.close();
@@ -127,7 +127,7 @@ public class experiments {
         int[]loaded=countList(loadedParcels);
         try
         {
-            String filename= "data.csv";
+            String filename= "data1.csv";
             FileWriter fw = new FileWriter(filename,true);
             fw.write(type+","+database+","+generation+","+time+",");
             for(int i=0;i<available.length;i++)
