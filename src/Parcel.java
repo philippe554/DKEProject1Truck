@@ -8,36 +8,48 @@ public class Parcel implements Comparable<Parcel>
     //maximum number of times a piece can be rotated
     private int rotations = 1;
     //Locations of the parcel's blocks with respect to the (0,0,0) block
-    protected ArrayList<Point3D> blockLocations = new ArrayList<Point3D>();
+    private ArrayList<Point3D> blockLocations = new ArrayList<Point3D>();
     //Locations of the vertices of the parcel
     protected ArrayList<Point3D> vertices = new ArrayList<Point3D>();
     //Locations of the sides of the parcel
-    protected ArrayList<Point3D[]> sides = new ArrayList<Point3D[]>();
+    private ArrayList<Point3D[]> sides = new ArrayList<Point3D[]>();
     //Location of the (0,0,0) block with respect to upper container
     protected Point3D location = new Point3D(0,0,0);
     //ID to recognise each parcel
     private int ID;
     static int numberOfParcels = 0;
     private double value;
-    protected int parcelType=0;
+    //To identify the parcel when it loses it's class casting
+    protected int parcelType;
 
+    /** Getter for parcel type
+     *
+     * @return int value of the type the parcel is assigned to
+     */
     public int getParcelType(){return parcelType;}
 
+    /** Deep clone for the Parcel.
+     *
+     * @return Another Parcel object with exactly same parameters and values as the original one
+     */
     @Override
     public Parcel clone()
     {
+        //Create new blocks and copy the blocks
         ArrayList<Point3D> newBlocks = new ArrayList<Point3D>();
         for(Point3D point : blockLocations)
         {
             Point3D newPoint = new Point3D(point.getX(),point.getY(),point.getZ());
             newBlocks.add(newPoint);
         }
+        //Copy the location
         Point3D newLocation = new Point3D(this.location.getX(),this.location.getY(),this.location.getZ());
+        //Create the parcel and copy the values
         Parcel cloneParcel = new Parcel(newBlocks, newLocation);
         cloneParcel.setValue(this.getValue());
         cloneParcel.setRotations(this.getRotations());
         cloneParcel.setID(this.getID());
-        cloneParcel.parcelType=this.parcelType;
+        cloneParcel.parcelType = this.parcelType;
         return cloneParcel;
     }
 
@@ -94,15 +106,19 @@ public class Parcel implements Comparable<Parcel>
         return 0;
     }
 
-    /** Gets the value of the parcel divided by its volume
+    /** Gets the value of the
      *
-     * @return value/volume as double
+     * @return value as double
      */
     public double getValue()
     {
         return this.value;
     }
 
+    /** Gets the value of the parcel divided by its volume
+     *
+     * @return value/volume as double
+     */
     public double getVolumetricValue() {return this.value/blockLocations.size();}
 
     /** Sets parcel's value to a certain double
@@ -224,6 +240,12 @@ public class Parcel implements Comparable<Parcel>
         location = location.add(point);
     }
 
+    /** Translates the block locations by given coordinates
+     *
+     * @param x amount to be translated by on x axis
+     * @param y amount to be translated by on y axis
+     * @param z amount to be translated by on z axis
+     */
     public void translateBlocks(int x, int y, int z)
     {
         ArrayList<Point3D> newBlockLocations = new ArrayList<Point3D>();
@@ -234,6 +256,10 @@ public class Parcel implements Comparable<Parcel>
         this.blockLocations = newBlockLocations;
     }
 
+    /** Translates the block locations by a given point
+     *
+     * @param point point to be translated by
+     */
     public void translateBlocks(Point3D point)
     {
         ArrayList<Point3D> newBlockLocations = new ArrayList<Point3D>();
@@ -331,7 +357,6 @@ public class Parcel implements Comparable<Parcel>
      *
      * @param blocks of Point3D
      */
-
     protected void setVertices(ArrayList<Point3D> blocks)
     {
 
@@ -390,7 +415,6 @@ public class Parcel implements Comparable<Parcel>
      *
      * @return Arraylist of Point3D of the vertices
      */
-
     public ArrayList<Point3D> getVertices()
     {
         vertices.clear();
@@ -453,7 +477,6 @@ public class Parcel implements Comparable<Parcel>
      *
      * @return An arraylist of arrays of Point3D objects
      */
-
     public ArrayList<Point3D[]> getSides()
     {
         getVertices();

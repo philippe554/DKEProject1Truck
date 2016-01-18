@@ -8,11 +8,10 @@ public class BruteForce
     private Container truck;
     //List of parcels that are fitted to the truck
     private ArrayList<Parcel> listOfPackets;
-    //List of pacets that will not be fitted to the truck (created by the process)
-    private ArrayList<Parcel> rejectedParcels = new ArrayList<Parcel>();
-    //List of parcels that have been loaded on truck
-    private ArrayList<Parcel> loadedParcels = new ArrayList<Parcel>();
+    //The current best solution
     private ArrayList<Parcel> bestSet = new ArrayList<Parcel>();
+    //List corresponding to the rotations of the parcels
+    ArrayList<ArrayList<Parcel>> listOfRotations = new ArrayList<ArrayList<Parcel>>();
 
     /** Constructs a new search for a given container and a set of parcels
      *
@@ -27,8 +26,20 @@ public class BruteForce
         //Sorting the list from largest value to smallest
         Collections.sort(listOfPackets);
         Collections.reverse(listOfPackets);
+        //Complete the list of rotations
+        listOfRotations.add(getAllRotations(new ParcelA()));
+        listOfRotations.add(getAllRotations(new ParcelB()));
+        listOfRotations.add(getAllRotations(new ParcelC()));
+        listOfRotations.add(getAllRotations(new ParcelL()));
+        listOfRotations.add(getAllRotations(new ParcelP()));
+        listOfRotations.add(getAllRotations(new ParcelT()));
     }
 
+    /** Solves the best possible packing by value of the container with given parcels.
+     *
+     * @param box The container to be filled
+     * @param pieces Parcels to be packed
+     */
     public void parcelSolver(Container box, ArrayList<Parcel> pieces)
     {
         //We're done if we don't have any more parcels to place in the list
@@ -46,7 +57,7 @@ public class BruteForce
         {
             //Set the first piece as active and get the rotation list
             Parcel activeParcel = pieces.get(0);
-            ArrayList<Parcel> rotationList = getAllRotations(activeParcel);
+            ArrayList<Parcel> rotationList = listOfRotations.get(activeParcel.getParcelType()-1);
             //Check if the piece can be used
             //For all locations
             for(int x = 0; x < box.getX(); x++)
@@ -63,6 +74,11 @@ public class BruteForce
                         //Check if it is in the container in a valid position after dropping
                         if(checkLocation(p,box))
                         {
+                            //Set the rotation list id's so the pieces can be drawn separately
+                            for(Parcel parcel : rotationList)
+                            {
+                                parcel.setID(activeParcel.getID());
+                            }
                             //If yes, create new box as a copy of the old one
                             Container newBox = box.clone();
                             //Print the parcel to the new box
@@ -91,7 +107,7 @@ public class BruteForce
                 for(int i = 1; i < pieces.size(); i++)
                     //We also exclude all pieces of the same type from this list
                     //as we know none of them will fit the container
-                    if(pieces.get(i).getValue() != activeParcel.getValue())
+                    if(pieces.get(i).getParcelType() != activeParcel.getParcelType())
                         newPieces.add(pieces.get(i));
                 parcelSolver(newBox,newPieces);
             }
@@ -160,8 +176,17 @@ public class BruteForce
         return sum;
     }
 
+    /** Gets the best set of parcels that can be fitted to the container
+     *
+     * @return List of the parcels with highest value
+     */
     public ArrayList<Parcel> getBestSet(){return bestSet;}
 
+    /** Gets all the possible rotations of the given parcel without repetition
+     *
+     * @param p parcel to be rotated
+     * @return ArrayList of rotations
+     */
     public ArrayList<Parcel> getAllRotations(Parcel p) {
         ArrayList<Parcel> rotations = new ArrayList<Parcel>();
         for(int j=0;j<4;j++) {
@@ -207,8 +232,6 @@ public class BruteForce
                 }
             }
         }
-
-        System.out.println(rotations.size());
         return rotations;
     }
 
@@ -218,10 +241,16 @@ public class BruteForce
      */
     public static void main(String[] args)
     {
-        Container container = new Container(2,4,4);
+        long startTime = System.currentTimeMillis();
+        System.out.println("Starting calculation at " + startTime);
+        Container container = new Container(33,8,5);
         ArrayList<Parcel> packets = new ArrayList<Parcel>();
-        for(int i = 0; i < 8; i++)
-            packets.add(new ParcelT());
+        for(int i = 0; i < 83; i++)
+        {
+            packets.add(new ParcelA());
+            packets.add(new ParcelB());
+            packets.add(new ParcelC());
+        }
         BruteForce solver = new BruteForce(container, packets);
         solver.parcelSolver(solver.truck,solver.listOfPackets);
 
@@ -246,6 +275,17 @@ public class BruteForce
             System.out.println();
             System.out.println();
         }
+        long endTime = System.currentTimeMillis();
+        System.out.println("Ending calculation at " + endTime);
+        System.out.println("Completed in " + (endTime-startTime) + " milliseconds.");
+        int value = 0;
+        for(Parcel p : solver.getBestSet())
+        {
+            value += p.getValue();
+            System.out.print(p.getParcelType() + ", ");
+        }
+        System.out.println("\nThe container's total value is: " + value +
+            "\nThe container was filled " + (100 - container.emptyPercent()) + "% full.");
     }
 
 }

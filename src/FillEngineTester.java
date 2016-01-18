@@ -79,9 +79,9 @@ public class FillEngineTester extends JPanel {
         engine3D.setup();
 
         //fillEngine = new HillClimb();
-        //fillEngine = new Genetic();
-        fillEngine = new DiagonalFill();
-        amountOfGenerations=1;
+        fillEngine = new Genetic();
+        //fillEngine = new DiagonalFill();
+        amountOfGenerations=100;
         this.run(list);
     }
     public void run(ArrayList<Parcel> listOfPackets){
@@ -120,7 +120,7 @@ public class FillEngineTester extends JPanel {
         Graphics2D localGraphics2D = (Graphics2D)g;
         if(img!=null) {
             localGraphics2D.drawImage(img, 0, 0, null);
-            localGraphics2D.drawString("FPS: "+Integer.toString(loadedParcels.size()),10,30);
+            localGraphics2D.drawString("Sides: "+Integer.toString(loadedParcels.size()),10,30);
         }
         localGraphics2D.setColor(Color.red);
         localGraphics2D.drawString("FPS: "+Integer.toString(fps),10,10);

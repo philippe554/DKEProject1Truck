@@ -66,6 +66,10 @@ public class Container {
         containedParcels.add(parcel.clone());
     }
 
+    /** Removes the parcel from the container
+     *
+     * @param parcel Parcel to be removed
+     */
     public void removeParcel(Parcel parcel)
     {
         int ID = parcel.getID();
@@ -122,6 +126,10 @@ public class Container {
         return newContainer;
     }
 
+    /** Gets the list of contained parcels
+     *
+     * @return ArrayList of the parcels that are in the container
+     */
     public ArrayList<Parcel> getContainedParcels() {return containedParcels;}
 
     public static void main(String[] args)
