@@ -20,33 +20,16 @@ public abstract class FillEngine {
         public int scoreID=0;
     }
     public class Setting {
-        /*protected double cValue = 1.0;
-        protected double cVolumetricValue = 1.0;
-        protected double cGaps = -1.0;
-        protected double[] cCoordinates = {-1, -1, -1};*/
-    /*
-     * value
-     * volumentric value
-     * gaps
-     * * * coordinates
-     */
-        public double[]c={1.0,1.0,-1.0,-1,-1,-1};
+        public double[]c={1.0,1.0,-1,-1,-1};
     }
     public class SettingExt extends Setting{
-        public SettingExt(Setting s)
-        {
+        public SettingExt(Setting s) {
             for(int i=0;i<s.c.length;i++)
             {
                 c[i]=s.c[i];
             }
-            /*cValue =s.cValue;
-            cVolumetricValue =s.cVolumetricValue;
-            cGaps = s.cGaps;
-            cCoordinates = new double[]{s.cCoordinates[0], s.cCoordinates[1], s.cCoordinates[2]};
-            cParcelShare = new double[]{s.cParcelShare[0], s.cParcelShare[1], s.cParcelShare[2], s.cParcelShare[3], s.cParcelShare[4], s.cParcelShare[5]};*/
         }
         public int amountParcels[] = {0, 0, 0, 0, 0, 0};
-        public double parcelShare[]={0,0,0,0,0,0};
         public double maxScore=-9999;
         public Parcel parcel=null;
         public int parcelID=0;
@@ -137,13 +120,9 @@ public abstract class FillEngine {
                                 if (possibleToPlace(container,rotations.get(r), i, j, k)) {
                                     double score = rotations.get(r).getValue()*s.c[0];
                                     score += rotations.get(r).getVolumetricValue()*s.c[1];
-                                    score += 0*s.c[2]; //TODO: make fucntion that counts gaps
-                                    score += i*s.c[3];
-                                    score += j*s.c[4];
-                                    score += k*s.c[5];
-                                    /*for(int a=0;a<s.amountParcels.length;a++){
-                                        score+= s.parcelShare[a]*s.c[6+a];
-                                    }*/
+                                    score += i*s.c[2];
+                                    score += j*s.c[3];
+                                    score += k*s.c[4];
                                     if(score>s.maxScore)
                                     {
                                         s.maxScore=score;
@@ -170,17 +149,6 @@ public abstract class FillEngine {
             s.totalScore+=s.parcel.getValue();
             s.maxScore=-9999;
             return true;
-        }
-    }
-    public void calcShare(SettingExt s) {
-        double amountOfParcels=0;
-        for(int i=0;i<s.amountParcels.length;i++)
-        {
-            amountOfParcels+=s.amountParcels[i];
-        }
-        for(int i=0;i<s.parcelShare.length;i++)
-        {
-            s.parcelShare[i]/=amountOfParcels;
         }
     }
     public Result run(ArrayList<Parcel> listOfPackets,ArrayList<Parcel>loadedParcels,Setting s) {
@@ -211,7 +179,13 @@ public abstract class FillEngine {
         return result;
     }
     public Setting[] mutate(Setting s) {
-        return null;
+        Setting[] sReturn = new Setting[1];
+        sReturn[0]=new Setting();
+        for(int j=0;j<sReturn[0].c.length;j++)
+        {
+            sReturn[0].c[j]=s.c[j];
+        }
+        return sReturn;
     }
     public Setting createRandomSetting(double range) {
         Setting s=new Setting();
@@ -219,6 +193,16 @@ public abstract class FillEngine {
         {
             s.c[i]=(Math.random()*range*2.0)-range;
         }
+        return s;
+    }
+    public Setting createCustomSetting(double c1,double c2, double c3, double c4, double c5)
+    {
+        Setting s = new Setting();
+        s.c[0]=c1;
+        s.c[1]=c2;
+        s.c[2]=c3;
+        s.c[3]=c4;
+        s.c[4]=c5;
         return s;
     }
 }

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class Genetic extends FillEngine {
     @Override
     public Setting[] mutate(Setting s) {
-        double mutationRate=0.30;
+        double mutationRate=0.50;
         Setting[] sReturn = new Setting[21];
         for(int i=0;i<20;i++)
         {
