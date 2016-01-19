@@ -97,7 +97,7 @@ class Engine3D {
                     if(minDebt!=-1) {
                         img.setRGB(i, j, calcColor(clossedSideID, clossedCol, camAngle));
                     }else{
-                        img.setRGB(i,j,0);
+                        img.setRGB(i,j,((255 << 16) | (255 << 8) | 255));
                     }
                 }
             }
