@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Created by pmmde on 1/14/2016.
  */
-public abstract class FillEngine {
+public class FillEngine {
     private static Parcel[] parcelPrototype={new ParcelA(),new ParcelB(),new ParcelC(),new ParcelL(),new ParcelP(), new ParcelT()};
 
     protected double cScore=1;
