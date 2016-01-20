@@ -11,27 +11,20 @@ import java.util.Collections;
 public class HillClimb extends FillEngine{
     @Override
     public Setting[] mutate(Setting s) {
-        double bigStep=3;
-        double smallStep=0.5;
-        Setting[] sReturn = new Setting[s.c.length*4+3];
+        double step=1;
+        Setting[] sReturn = new Setting[s.c.length*2+3];
         for(int i=0;i<s.c.length;i++)
         {
-            sReturn[i*4] = new Setting();
-            sReturn[i*4+1] = new Setting();
-            sReturn[i*4+2] = new Setting();
-            sReturn[i*4+3] = new Setting();
+            sReturn[i*2] = new Setting();
+            sReturn[i*2+1] = new Setting();
             for(int j=0;j<s.c.length;j++)
             {
                 if(i==j){
-                    sReturn[i*4].c[j]=s.c[j]+bigStep;
-                    sReturn[i*4+1].c[j]=s.c[j]-smallStep;
-                    sReturn[i*4+2].c[j]=s.c[j]+smallStep;
-                    sReturn[i*4+3].c[j]=s.c[j]-smallStep;
+                    sReturn[i*2].c[j]=s.c[j]+step;
+                    sReturn[i*2+1].c[j]=s.c[j]-step;
                 }else{
-                    sReturn[i*4].c[j]=s.c[j];
-                    sReturn[i*4+1].c[j]=s.c[j];
-                    sReturn[i*4+2].c[j]=s.c[j];
-                    sReturn[i*4+3].c[j]=s.c[j];
+                    sReturn[i*2].c[j]=s.c[j];
+                    sReturn[i*2+1].c[j]=s.c[j];
                 }
             }
         }

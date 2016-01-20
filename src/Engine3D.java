@@ -12,8 +12,18 @@ import java.util.LinkedList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+/**
+ * The 3D engine
+ * Typical use:
+ * Call setup()
+ * Call addParcels()
+ * Call renderImage()
+ */
 class Engine3D {
 
+    /**
+     * stores the information for one side
+     */
     class Side{
         private int a,b,c;
         private double planeA;
@@ -25,6 +35,9 @@ class Engine3D {
         private int colorG=100;
         private double minColDistance=0;
         private Point3D center;
+        /**
+         * pre calculate some values to shorten the time of renderImage
+         */
         private void calcPlane(){
             Point3D d1 = new Point3D(vertices.get(a).getX()-vertices.get(c).getX(), //start calc plane second side
                     vertices.get(a).getY()-vertices.get(c).getY(),
@@ -46,6 +59,12 @@ class Engine3D {
                     (vertices.get(a).getZ()+vertices.get(b).getZ()+vertices.get(c).getZ())/3);
             minColDistance=Math.max(Math.max(center.distance(vertices.get(a)),center.distance(vertices.get(b))),center.distance(vertices.get(c)));
         }
+        /**
+         * constuctor, sets the points
+         * @param A point a
+         * @param B point b
+         * @param C point c
+         */
         private Side(int A,int B,int C) {
             a=A;b=B;c=C;
             calcPlane();
@@ -170,6 +189,9 @@ class Engine3D {
 
     private int amountOfThreads=4;
 
+    /**
+     * setup the engine to begin rendering
+     */
     public void setup(){
         hViewAngle=60.0;
         vViewAngle=hViewAngle;
@@ -190,6 +212,10 @@ class Engine3D {
         vertices = new ArrayList<Point3D>();
         side = new ArrayList<Side>();
     }
+    /**
+     * add a list of parcels
+     * @param parcels the list of parcels
+     */
     public void addParcels(ArrayList<Parcel> parcels) {
         for(int i=0;i<parcels.size();i++) {
             int colorR = (int) (Math.random() * 150);
@@ -275,10 +301,17 @@ class Engine3D {
             }
         }*/
     }
+    /**
+     * Empty the all sides
+     */
     public void emptyParcels() {
         vertices.clear();
         side.clear();
     }
+    /**
+     * rotate the setup, doesn't render it
+     * @param degree the degree
+     */
     public void rotate(int degree){
         double angle =degree/180.0*Math.PI;
 
@@ -302,6 +335,10 @@ class Engine3D {
                 ,m[1][0]*sun.getX() + m[1][1]*sun.getY() + m[1][2]*sun.getZ()
                 ,m[2][0]*sun.getX() + m[2][1]*sun.getY() + m[2][2]*sun.getZ());*/
     }
+    /**
+     * Render and return the image that is stored
+     * @return the image
+     */
     public BufferedImage renderImage(){
         RenderThread RT[]= new RenderThread[amountOfThreads];
         for(int i=0;i<amountOfThreads;i++) {
@@ -317,6 +354,18 @@ class Engine3D {
         }
         return img;
     }
+    /**
+     * add a box to the arraylist
+     * @param minX minx
+     * @param maxX maxx
+     * @param minY miny
+     * @param maxY maxy
+     * @param minZ minz
+     * @param maxZ maxz
+     * @param colorR red
+     * @param colorG green
+     * @param colorB blue
+     */
     public void addBox(double minX,double maxX,double minY,double maxY,double minZ,double maxZ, int colorR, int colorG, int colorB) {
         vertices.add(new Point3D(  minX,  minY,  minZ ));
         vertices.add(new Point3D(  minX,  maxY,  minZ ));
@@ -397,6 +446,9 @@ class Engine3D {
         side.get(side.size()-1).colorB=colorB;
 
     }
+    /**
+     * clear everything and add a truck
+     */
     public void loadTruck() {
         side.clear();
         vertices.clear();
@@ -440,10 +492,23 @@ class Engine3D {
         addBox(26.7,27.8,15,16,-2,-5.8  ,20,20,20);
         sun = new Point3D(27.25,13.5,-2.3);
     }
-
+    /**
+     * Subtract 2 Point3D of each other
+     * @param p1 first point
+     * @param p2 second point
+     * @return first point - second point
+     */
     private Point3D subtract3D(Point3D p1,Point3D p2) {
         return new Point3D(p1.getX()-p2.getX(),p1.getY()-p2.getY(),p1.getZ()-p2.getZ());
     }
+    /**
+     * Check if a point is in a triangle in 3D
+     * @param p the point
+     * @param a the index of the trianglecorner 1
+     * @param b the index of the trianglecorner 1
+     * @param c the index of the trianglecorner 1
+     * @return True if its in, false if its outside
+     */
     private boolean PointInTriangle(Point3D p,Point3D a,Point3D b,Point3D c) {
         Point3D v0=subtract3D(c,a);
         Point3D v1=subtract3D(b,a);
