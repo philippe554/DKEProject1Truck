@@ -97,8 +97,8 @@ public class experiments {
     public static void main(String[]args) {
         startOutputResult();
         //run(new DiagonalFill(),1,"DiagonalFill");
-        run(new Genetic(),20,"Genetic");
-        //run(new HillClimb(),20,"HillClimb");
+        //run(new Genetic(),20,"Genetic");
+        run(new HillClimb(),20,"HillClimb");
         //run(new Random(),1,"Random");
     }
     /**

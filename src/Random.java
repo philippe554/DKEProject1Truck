@@ -26,9 +26,9 @@ public class Random extends FillEngine{
         {
             int i=(int)Math.random()*listOfPackets.size();
             Parcel p = getAllRotations(listOfPackets.get(i)).get((int) (Math.random()*24));
-            listOfPackets.remove(i);
             if(placeRandom(p,container))
             {
+                listOfPackets.remove(i);
                 loadedParcels.add(p);
                 result.score+=p.getValue();
             }else{
@@ -57,6 +57,7 @@ public class Random extends FillEngine{
                     p.translate(i,j,k);
                     c.addParcel(p);
                     placed=true;
+                    k=c.getZ();
                 }
             }
             tries++;
