@@ -2,11 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-/**
- * Created by pmmde on 1/15/2016.
- */
+//unofficial code, used for testing only
 public class Engine3DTester extends JPanel{
-
     private BufferedImage img=null;
     int fps=0;
     public static void main(String[]args) {

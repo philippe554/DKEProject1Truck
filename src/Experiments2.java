@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * Created by pmmde on 1/17/2016.
- */
+//unofficial code, used for testing only
 public class Experiments2 {
     private static int amountDatabase[][]={
             /*{100,0,0,0,0,0},

@@ -3,9 +3,14 @@ import java.awt.*;
 import java.util.ArrayList;
 
 /**
- * Created by pmmde on 1/14/2016.
+ * An extension on the the fill engine: hill climbing
  */
 public class DiagonalFill extends FillEngine{
+    /**
+     * Mutates the setting to constant values needed for the hillclimbing
+     * @param s the start setting
+     * @return the list of new settigns (here size = 1)
+     */
     @Override
     public Setting[] mutate(Setting s) {
         Setting[] sReturn = new Setting[1];
