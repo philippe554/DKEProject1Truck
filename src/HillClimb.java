@@ -6,9 +6,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * Created by pmmde on 1/13/2016.
+ * An extension on the the fill engine: genetic
  */
 public class HillClimb extends FillEngine{
+    /**
+     * Changes the setting with hill climbing rules + copy of the original
+     * @param s the start setting
+     * @return the list of new settigns (here size = 13)
+     */
     @Override
     public Setting[] mutate(Setting s) {
         double step=1;

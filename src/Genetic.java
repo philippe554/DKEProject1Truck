@@ -1,11 +1,12 @@
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-
 /**
- * Created by pmmde on 1/14/2016.
+ * An extension on the the fill engine: genetic
  */
 public class Genetic extends FillEngine {
+    /**
+     * Mutates the setting in a genetic way + copy of the original
+     * @param s the start setting
+     * @return the list of new settigns (here size = 21)
+     */
     @Override
     public Setting[] mutate(Setting s) {
         double mutationRate=0.50;

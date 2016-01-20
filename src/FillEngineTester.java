@@ -3,9 +3,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-/**
- * Created by pmmde on 1/17/2016.
- */
+//unofficial code, used for testing only
 public class FillEngineTester extends JPanel {
     private int fps=0;
     private int generation=0;
