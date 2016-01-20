@@ -57,7 +57,6 @@ public class Random extends FillEngine{
                     p.translate(i,j,k);
                     c.addParcel(p);
                     placed=true;
-                    k=c.getZ();
                 }
             }
             tries++;
