@@ -2,6 +2,9 @@ import javafx.geometry.Point3D;
 
 import java.util.ArrayList;
 
+/**
+ * specialization for parcel P
+ */
 public class ParcelP extends Parcel
 {
 

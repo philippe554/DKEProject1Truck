@@ -5,7 +5,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 /**
- * Created by pmmde on 1/14/2016.
+ * Parent class of the algorithms except the brute fore
  */
 public class FillEngine {
     private static Parcel[] parcelPrototype={new ParcelA(),new ParcelB(),new ParcelC(),new ParcelL(),new ParcelP(), new ParcelT()};
@@ -85,7 +85,7 @@ public class FillEngine {
      * @param x x coordinate
      * @param y y coordinate
      * @param z z coordinate
-     * @return
+     * @return true if possible to place
      */
     public boolean possibleToPlace(Container container ,Parcel p,int x,int y,int z){
         boolean possible=true;

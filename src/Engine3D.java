@@ -14,10 +14,6 @@ import javax.swing.JPanel;
 
 /**
  * The 3D engine
- * Typical use:
- * Call setup()
- * Call addParcels()
- * Call renderImage()
  */
 class Engine3D {
 

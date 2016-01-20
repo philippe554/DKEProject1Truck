@@ -5,6 +5,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.swing.*;
 
+/**
+ * UI
+ */
 public class UIFrame extends JFrame implements ActionListener {
 
     //Declare objects
@@ -33,7 +36,7 @@ public class UIFrame extends JFrame implements ActionListener {
 
     /**
      * What happens when Run button is pressed. Gathers inputs from every text field, constructs parcel list and starts selected algorithm.
-     * @param e
+     * @param e the event
      */
     public void actionPerformed(ActionEvent e) {
         //Fill the parcel list with input from the frame
@@ -261,7 +264,7 @@ public class UIFrame extends JFrame implements ActionListener {
 
     /**
      * Creates the Frame objects, displays it, creates 3DEngine and sets it up. Initializes some variables.
-     * @param args
+     * @param args not used
      */
     public static void main(String[] args) {
         UIFrame truckFrame = new UIFrame("Knapsack Truck");

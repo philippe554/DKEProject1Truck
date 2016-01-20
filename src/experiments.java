@@ -7,9 +7,8 @@ import java.util.Arrays;
 
 /**
  * the working class that does the experiments and ouptuts it to a file
- * How to use:
- * Comment the sets you do not want to use in the amountDatase
- * Comment the algorithms you do not want to use in the main funcitons\
+ * How to use: Comment the sets you do not want to use in the amountDatase,
+ * Comment the algorithms you do not want to use in the main funcitons,
  * Run the class
  */
 public class experiments {

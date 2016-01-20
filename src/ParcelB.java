@@ -1,5 +1,7 @@
 import javafx.geometry.Point3D;
-
+/**
+ * specialization for parcel B
+ */
 public class ParcelB extends Parcel
 {
 

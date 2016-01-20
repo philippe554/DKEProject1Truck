@@ -3,6 +3,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Parent class for all parcels
+ */
 public class Parcel implements Comparable<Parcel>
 {
     //maximum number of times a piece can be rotated
@@ -205,9 +208,9 @@ public class Parcel implements Comparable<Parcel>
         blockLocations.addAll(newLocations);
     }
 
-    /** Gets the list of block locations
-     *
-     * @return ArrayList<Point3D> of the locations of the blocks
+    /**
+     * return the locations of the parcel
+     * @return the locations
      */
     public ArrayList<Point3D> getLocations()
     {
@@ -292,9 +295,9 @@ public class Parcel implements Comparable<Parcel>
         location = location.add(point);
     }
 
-    /** Returns the locations of the blocks in the parcel with respect to an upper container
-     *
-     * @return ArrayList<Point3D> containing the points
+    /**
+     * get locations in respect to the container
+     * @return the locations
      */
     public ArrayList<Point3D> getBlockLocations()
     {

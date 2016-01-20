@@ -2,6 +2,9 @@ import javafx.geometry.Point3D;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * algorithm for the brute force
+ */
 public class BruteForce
 {
     //Container where parcels are put in to
