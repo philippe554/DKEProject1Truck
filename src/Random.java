@@ -7,9 +7,17 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 /**
- * Created by Marie on 11/01/2016.
+ * extension on FillEngine: random
+ * Is not using the main functions of the fill engine, but uses the elementary functions
  */
 public class Random extends FillEngine{
+    /**
+     * Fill all the parcels
+     * @param listOfPackets input parcels
+     * @param loadedParcels pointer to output parcels
+     * @param s the settings
+     * @return the result
+     */
     public Result run(ArrayList<Parcel> listOfPackets,ArrayList<Parcel>loadedParcels,Setting s) {
         Result result=new Result();
         Container container = new Container(33,8,5);
@@ -31,6 +39,13 @@ public class Random extends FillEngine{
         result.combinedScore=cScore*result.score+cFilled*result.proccentFilled;
         return result;
     }
+    /**
+     * place the parcel on a random place in the container
+     * Gives is a limited amount of tries, before interupting
+     * @param p the parcel
+     * @param c the container
+     * @return true if it was possible to place a parcel
+     */
     public boolean placeRandom(Parcel p,Container c) {
         int tries= 0;
         boolean placed=false;
