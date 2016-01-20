@@ -430,15 +430,6 @@ public class Parcel implements Comparable<Parcel>
             vertices.add(point);
         }
 
-        System.out.println(vertices.get(0));
-        System.out.println(vertices.get(1));
-        System.out.println(vertices.get(2));
-        System.out.println(vertices.get(3));
-        System.out.println(vertices.get(4));
-        System.out.println(vertices.get(5));
-        System.out.println(vertices.get(6));
-        System.out.println(vertices.get(7));
-
         return result;
     }
 

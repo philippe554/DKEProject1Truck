@@ -35,7 +35,7 @@ public class Random extends FillEngine{
                 stillPossible=false;
             }
         }
-        result.proccentFilled=(100.0-container.emptyPercent());
+        result.proccentFilled=container.emptyPercent();
         result.combinedScore=cScore*result.score+cFilled*result.proccentFilled;
         return result;
     }
