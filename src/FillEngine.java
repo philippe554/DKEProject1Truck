@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class FillEngine {
     private static Parcel[] parcelPrototype={new ParcelA(),new ParcelB(),new ParcelC(),new ParcelL(),new ParcelP(), new ParcelT()};
 
-    protected double cScore=0;
+    protected double cScore=1;
     protected double cFilled=1;
 
     /**

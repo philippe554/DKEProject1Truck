@@ -17,22 +17,22 @@ public class experiments {
      * the database on wich sets it needs to run
      */
     private static int amountDatabase[][]={
-            /*{100,0,0,0,0,0},
+            {100,0,0,0,0,0},
             {0,100,0,0,0,0},
             {0,0,100,0,0,0},
             {0,0,0,300,0,0},
             {0,0,0,0,300,0},
-            {0,0,0,0,0,300},*/
-            {100,100,100,0,0,0},/*
+            {0,0,0,0,0,300},
+            {100,100,100,0,0,0},
             {50,50,50,0,0,0},
-            {0,0,0,100,100,100},*/
-            {0,0,0,300,300,300},/*
+            {0,0,0,100,100,100},
+            {0,0,0,300,300,300},
             {50,50,50,50,50,50},
             {25,25,25,25,25,25},
             {-1,-1,-1,-1,-1,-1,50}, //-1 means random, with a limit of the seventh element
             {-1,-1,-1,0,0,0,75},
             {0,0,0,-1,-1,-1,200},
-            {100,100,100,300,300,300}*/};
+            {100,100,100,300,300,300}};
     /**
      * the container size
      */
@@ -98,8 +98,8 @@ public class experiments {
         startOutputResult();
         //run(new DiagonalFill(),1,"DiagonalFill");
         //run(new Genetic(),20,"Genetic");
-        run(new HillClimb(),20,"HillClimb");
-        //run(new Random(),1,"Random");
+        //run(new HillClimb(),20,"HillClimb");
+        run(new Random(),1,"Random");
     }
     /**
      * Run the engine
