@@ -13,16 +13,29 @@ public class FillEngine {
     protected double cScore=1;
     protected double cFilled=1;
 
+    /**
+     * The result of a run containing certain information
+     */
     public class Result{
         public double score=0;
         public double combinedScore=0;
         public double proccentFilled=0;
         public int scoreID=0;
     }
+    /**
+     * a prototype for the settings containing the weights
+     */
     public class Setting {
         public double[]c={1.0,1.0,-1,-1,-1};
     }
+    /**
+     * the extended setting containing more information about the run
+     */
     public class SettingExt extends Setting{
+        /**
+         * make a extended setting of a normal setting
+         * @param s the normal setting
+         */
         public SettingExt(Setting s) {
             for(int i=0;i<s.c.length;i++)
             {
@@ -36,7 +49,11 @@ public class FillEngine {
         public int total;
         public int totalScore=0;
     }
-
+    /**
+     * get a list of all rotations of this parcels, copies not deleted yet
+     * @param p the input parcel
+     * @return all 24 rotations
+     */
     public ArrayList<Parcel> getAllRotations(Parcel p) {
         ArrayList<Parcel> rotations = new ArrayList<Parcel>();
         for(int j=0;j<4;j++) {
@@ -61,6 +78,15 @@ public class FillEngine {
         //TODO: check if there are copies
         return rotations;
     }
+    /**
+     * check if it is possible to place this parcel on this place in a container
+     * @param container the container
+     * @param p the parcel
+     * @param x x coordinate
+     * @param y y coordinate
+     * @param z z coordinate
+     * @return
+     */
     public boolean possibleToPlace(Container container ,Parcel p,int x,int y,int z){
         boolean possible=true;
         ArrayList<Point3D> pos = p.getBlockLocations();
@@ -77,6 +103,14 @@ public class FillEngine {
         }
         return possible;
     }
+    /**
+     * fill in all possible parcels
+     * @param listOfPackets list of available parcels
+     * @param loadedParcels the pointer to loaded parcels
+     * @param container the container, typical empty
+     * @param setting the setting
+     * @return the result
+     */
     public Result fill(ArrayList<Parcel> listOfPackets,ArrayList<Parcel> loadedParcels, Container container,Setting setting){
         SettingExt s = new SettingExt(setting);
         s.total=listOfPackets.size();
@@ -108,6 +142,13 @@ public class FillEngine {
         result.proccentFilled=container.emptyPercent();
         return result;
     }
+    /**
+     * fill in the next parcel
+     * @param loadedParcels list of already loaded parcels
+     * @param container the container containing already filled areas
+     * @param s the extended setting, containing the setting and the amount af parcels that still needs to be placed
+     * @return true if it was still possible to place something
+     */
     public boolean fillNext(ArrayList<Parcel> loadedParcels,Container container,SettingExt s) {
         //calcShare(s);
         for(int l=0;l<s.amountParcels.length;l++) {
@@ -151,6 +192,13 @@ public class FillEngine {
             return true;
         }
     }
+    /**
+     * fill a truc with the given parcels and setting
+     * @param listOfPackets input parcels
+     * @param loadedParcels pointer to output parcels
+     * @param s the settings
+     * @return the result, containing information about the run
+     */
     public Result run(ArrayList<Parcel> listOfPackets,ArrayList<Parcel>loadedParcels,Setting s) {
         Result result=new Result();
         Setting[] settings = mutate(s);
@@ -178,6 +226,11 @@ public class FillEngine {
         }
         return result;
     }
+    /**
+     * mutate a setting, could be overwritten to change behavior of engine
+     * @param s the start setting
+     * @return the list of new settings
+     */
     public Setting[] mutate(Setting s) {
         Setting[] sReturn = new Setting[1];
         sReturn[0]=new Setting();
@@ -187,6 +240,11 @@ public class FillEngine {
         }
         return sReturn;
     }
+    /**
+     * Create a random setting
+     * @param range the range of the setting
+     * @return the setting
+     */
     public Setting createRandomSetting(double range) {
         Setting s=new Setting();
         for(int i=0;i<s.c.length;i++)
@@ -195,6 +253,15 @@ public class FillEngine {
         }
         return s;
     }
+    /**
+     * create a custom setting
+     * @param c1 weight of value
+     * @param c2 weight of volumetrix value
+     * @param c3 weight of x
+     * @param c4 weight of y
+     * @param c5 weight of z
+     * @return the setting
+     */
     public Setting createCustomSetting(double c1,double c2, double c3, double c4, double c5) {
         Setting s = new Setting();
         s.c[0]=c1;
